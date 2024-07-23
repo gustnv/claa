@@ -3,27 +3,26 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Registration Page</title>
+  <title>Profile Page</title>
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
 <body class="flex items-center py-16 justify-center min-h-screen bg-gray-100">
   <div class="text-center absolute top-5 left-5 font-bold text-lg">CLAA - UFSC</div>
+
   <div class="w-full max-w-lg p-8 bg-white rounded-lg shadow-md">
     <h2 class="mb-6 text-2xl font-semibold text-gray-700">Perfil</h2>
-    <form action="#">
-
+    <form action="panel.html">
       <div class="mb-4">
-        <label class="block mb-2 text-sm font-medium text-gray-600" for="group-name">Nome do tutor</label>
-        <input class="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:ring focus:border-blue-300" type="text" id="group-name" value="" required>
+        <label class="block mb-2 text-sm font-medium text-gray-600" for="tutor-name">Nome do tutor</label>
+        <input class="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:ring focus:border-blue-300" type="text" id="tutor-name" value="" required>
       </div>
       <div class="mb-8">
-        <label class="block mb-2 text-sm font-medium text-gray-600" for="group-tutor-status">Status CLAA</label>
-        <select class="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:ring focus:border-blue-300" id="group-center" required>
+        <label class="block mb-2 text-sm font-medium text-gray-600" for="tutor-status">Status CLAA</label>
+        <select class="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:ring focus:border-blue-300" id="tutor-status" required>
           <option value="" disabled selected>É membro do CLAA?</option>
           <option>Não.</option>
           <option>Sim, Titular.</option>
           <option>Sim, Suplente.</option>
-          <!-- Add more options as needed -->
         </select>
       </div>
 
@@ -46,11 +45,11 @@
       </div>
       <div class="mb-4">
         <label class="block mb-2 text-sm font-medium text-gray-600" for="group-scholarship-number">Número de bolsistas</label>
-        <input class="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:ring focus:border-blue-300" type="number" id="group-page" value="" required>
+        <input class="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:ring focus:border-blue-300" type="number" id="group-scholarship-number" value="" required>
       </div>
       <div class="mb-8">
         <label class="block mb-2 text-sm font-medium text-gray-600" for="group-volunteer-number">Número de voluntários</label>
-        <input class="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:ring focus:border-blue-300" type="number" id="group-page" value="" required>
+        <input class="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:ring focus:border-blue-300" type="number" id="group-volunteer-number" value="" required>
       </div>
 
       <h3 class="mb-4 text-lg font-medium text-gray-700">Endereço</h3>
@@ -63,7 +62,6 @@
         <select class="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:ring focus:border-blue-300" id="group-campus" required>
           <option value="" disabled selected>Selecione um campus</option>
           <option>Florianópolis</option>
-          <!-- Add more options as needed -->
         </select>
       </div>
       <div class="mb-12">
@@ -71,7 +69,6 @@
         <select class="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:ring focus:border-blue-300" id="group-center" required>
           <option value="" disabled selected>Selecione um centro</option>
           <option>CTC</option>
-          <!-- Add more options as needed -->
         </select>
       </div>
 
@@ -91,6 +88,7 @@
       <div>
         <button class="w-full px-4 py-2 text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none focus:bg-blue-700" type="submit">Salvar</button>
       </div>
+
     </form>
   </div>
   <script>
@@ -108,4 +106,3 @@
   </script>
 </body>
 </html>
-
