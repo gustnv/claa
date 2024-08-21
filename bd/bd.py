@@ -8,7 +8,19 @@ config = {
   'raise_on_warnings': True
 }
 
-def have_user(email, password):
+def have_user():
+    pass
+
+def get_user():
+    pass
+
+def set_user():
+    pass
+
+def get_group_pet():
+    pass
+
+def signup():
     pass
 
 
