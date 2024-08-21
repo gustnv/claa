@@ -15,9 +15,9 @@ def login_page():
 @app.route('/login', methods=['POST'])
 def login():
     email = request.form.get("email")
-    senha = request.form.get("senha")
+    password = request.form.get("password")
     print(email)
-    print(senha)
+    print(password)
     return redirect('/')
 
 

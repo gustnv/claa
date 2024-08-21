@@ -8,16 +8,20 @@ config = {
   'raise_on_warnings': True
 }
 
-cnx = mysql.connector.connect(**config)
-cursor = cnx.cursor()
+def have_user(email, password):
+    pass
 
-add_usuario = ("insert into usuarios"
-               "(nome, membro_claa, email)"
-               "values (%s, %s, %s)")
-data_usuario = ('joao', 'nao', 'santosjoao301@gmail.com')
 
-cursor.execute(add_usuario, data_usuario)
-cnx.commit()    
+# cnx = mysql.connector.connect(**config)
+# cursor = cnx.cursor()
 
-cursor.close()
-cnx.close()         
+# add_usuario = ("insert into usuarios"
+#                "(nome, membro_claa, email)"
+#                "values (%s, %s, %s)")
+# data_usuario = ('joao', 'nao', 'santosjoao301@gmail.com')
+
+# cursor.execute(add_usuario, data_usuario)
+# cnx.commit()    
+
+# cursor.close()
+# cnx.close()         
