@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Articulação do Ensino, Pesquisa e Extensão</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="flex items-center py-16 justify-center min-h-screen bg-gray-100">
+  <div class="text-center absolute top-5 left-5 font-bold text-lg">CLAA - UFSC</div>
+  <div class="w-full max-w-2xl p-8 bg-white rounded-lg shadow-md">
+    <h2 class="mb-2 text-xl font-semibold text-gray-700">Articulação do Ensino, Pesquisa e Extensão</h2>
+    <p class="text-gray-600">Inserção de Atividades Não Programadas e Realizadas</p>
+    <p class="mb-8 text-gray-500 text-sm">Preencher todas as atividades que foram inseridas no planejamento cadastrado no Sigpet.</p>
+
+    <form id="form" action="report-2.html">
+      <div id="activities-container">
+        <div id="activity-0" class="activity-form">
+          <div class="mb-8">
+            <label class="block mb-2 text-sm font-medium text-gray-600">Nome da atividade</label>
+            <input class="activity-name w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:ring focus:border-blue-300" type="text" required>
+          </div>
+
+          <div class="mb-8">
+            <label class="block mb-2 text-sm font-medium text-gray-600">Justificativa para realização da atividade</label>
+            <textarea style="resize:none" class="justificativa w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:ring focus:border-blue-300" maxlength="500" rows="4" required></textarea>
+          </div>
+
+          <div class="mb-8">
+            <label class="block mb-2 text-sm font-medium text-gray-600">Horas Totais Investidas</label>
+            <input class="total-hours w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:ring focus:border-blue-300" type="number" required>
+          </div>
+
+          <div class="mb-8">
+            <label class="block mb-2 text-sm font-medium text-gray-600">Classificação da Atividade</label>
+            <div class="flex items-center mb-4">
+              <input type="checkbox" class="ensino mr-2">
+              <label class="mr-9 text-gray-600">Ensino</label>
+              <input class="ensino-number w-20 px-2 py-1 text-gray-700 border rounded-lg focus:outline-none focus:ring focus:border-blue-300" type="number" value="0" disabled>
+            </div>
+            <div class="flex items-center mb-4">
+              <input type="checkbox" class="pesquisa mr-2">
+              <label class="mr-5 text-gray-600">Pesquisa </label>
+              <input class="pesquisa-number w-20 px-2 py-1 text-gray-700 border rounded-lg focus:outline-none focus:ring focus:border-blue-300" type="number" value="0" disabled>
+            </div>
+            <div class="flex items-center mb-4">
+              <input type="checkbox" class="extensao mr-2">
+              <label class="mr-4 text-gray-600">Extensão</label>
+              <input class="extensao-number w-20 px-2 py-1 text-gray-700 border rounded-lg focus:outline-none focus:ring focus:border-blue-300" type="number" value="0" disabled>
+            </div>
+
+            <p class="incompatible-hours text-red-600" style="display:none">As horas somadas devem ser iguais as horas totais.</p>
+          </div>
+          <hr class="my-8 border-t border-gray-300">
+        </div>
+      </div>
+
+      <button id="add-activity-btn" class="w-full px-4 py-2 mb-8 text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none focus:bg-blue-700" type="button">Adicionar Mais Atividades Não Programadas e Realizadas</button>
+      <div class="flex justify-between">
+        <a href="report-0.html" class="w-1/2 mr-2 px-4 py-2 text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none focus:bg-blue-700 text-center"><b>Voltar</b></a>
+        <button class="w-1/2 ml-2 px-4 py-2 text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none focus:bg-blue-700" type="submit">Prosseguir</button>
+      </div>
+
+    </form>
+  </div>
+
+  <script>
+    var activityCounter = 1;
+    var validFlags = [];
+
+    function checkHours(activityForm) {
+      var total = Number(activityForm.querySelector('.total-hours').value);
+      var ensino_hours = Number(activityForm.querySelector('.ensino-number').value);
+      var pesquisa_hours = Number(activityForm.querySelector('.pesquisa-number').value);
+      var extensao_hours = Number(activityForm.querySelector('.extensao-number').value);
+      var partial_sum = ensino_hours + pesquisa_hours + extensao_hours;
+
+      if (total == partial_sum) {
+        activityForm.querySelector('.incompatible-hours').style.display = 'none';
+        return true;
+      } else {
+        activityForm.querySelector('.incompatible-hours').style.display = 'block';
+        return false;
+      }
+    }
+
+    function addEventListeners(activityForm) {
+      activityForm.querySelector('.total-hours').addEventListener('change', function() {
+        updateValidFlags(activityForm);
+      });
+
+      activityForm.querySelector('.ensino-number').addEventListener('change', function() {
+        updateValidFlags(activityForm);
+      });
+
+      activityForm.querySelector('.ensino').addEventListener('change', function() {
+        var ensinoNumber = activityForm.querySelector('.ensino-number');
+        ensinoNumber.disabled = !ensinoNumber.disabled;
+        if (!activityForm.querySelector('.ensino').checked)
+          ensinoNumber.value = 0;
+
+        updateValidFlags(activityForm);
+      });
+
+      activityForm.querySelector('.pesquisa-number').addEventListener('change', function() {
+        updateValidFlags(activityForm);
+      });
+
+      activityForm.querySelector('.pesquisa').addEventListener('change', function() {
+        var pesquisaNumber = activityForm.querySelector('.pesquisa-number');
+        if (!activityForm.querySelector('.pesquisa').checked)
+          pesquisaNumber.value = 0;
+        pesquisaNumber.disabled = !pesquisaNumber.disabled;
+
+        updateValidFlags(activityForm);
+      });
+
+      activityForm.querySelector('.extensao-number').addEventListener('change', function() {
+        updateValidFlags(activityForm);
+      });
+
+      activityForm.querySelector('.extensao').addEventListener('change', function() {
+        var extensaoNumber = activityForm.querySelector('.extensao-number');
+        if (!activityForm.querySelector('.extensao').checked)
+          extensaoNumber.value = 0;
+        extensaoNumber.disabled = !extensaoNumber.disabled;
+
+        updateValidFlags(activityForm);
+      });
+    }
+
+    function updateValidFlags(activityForm) {
+      var activityIndex = parseInt(activityForm.id.split('-')[1]);
+      validFlags[activityIndex] = checkHours(activityForm);
+    }
+
+    function addActivity() {
+      var container = document.getElementById('activities-container');
+      var newActivity = document.querySelector('.activity-form').cloneNode(true);
+
+      // Clear input values
+      newActivity.querySelector('.activity-name').value = '';
+      newActivity.querySelector('.justificativa').value = '';
+      newActivity.querySelector('.total-hours').value = '';
+      newActivity.querySelector('.ensino').checked = false;
+      newActivity.querySelector('.ensino-number').value = '0';
+      newActivity.querySelector('.ensino-number').disabled = true;
+      newActivity.querySelector('.pesquisa').checked = false;
+      newActivity.querySelector('.pesquisa-number').value = '0';
+      newActivity.querySelector('.pesquisa-number').disabled = true;
+      newActivity.querySelector('.extensao').checked = false;
+      newActivity.querySelector('.extensao-number').value = '0';
+      newActivity.querySelector('.extensao-number').disabled = true;
+      newActivity.querySelector('.incompatible-hours').style.display = 'none';
+
+      newActivity.id = 'activity-' + activityCounter;
+      validFlags[activityCounter] = false;  // Initially set to false
+      activityCounter++;
+
+      addEventListeners(newActivity);
+      container.appendChild(newActivity);
+    }
+
+    document.getElementById('add-activity-btn').addEventListener('click', addActivity);
+
+    // Add event listeners to the initial activity form
+    addEventListeners(document.getElementById('activity-0'));
+    validFlags[0] = false;  // Initially set to false for the first activity
+
+    document.getElementById('form').addEventListener('submit', function(event) {
+      var forms = document.querySelectorAll('.activity-form');
+      forms.forEach(form => updateValidFlags(form));
+
+      var allValid = validFlags.every(Boolean);  // Check if all are true
+
+      if (!allValid) {
+        event.preventDefault();
+      }
+    });
+  </script>
+</body>
+</html>
