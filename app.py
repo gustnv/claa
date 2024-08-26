@@ -1,4 +1,4 @@
-from flask import Flask, render_template, redirect, request
+from flask import Flask, flash, render_template, redirect, request
 from bd import bd
 
 
@@ -38,7 +38,10 @@ def signup_page():
     email = request.form.get("email")
     password = request.form.get("password")
 
-    bd.register_tutor(name, status_claa, email, password)
+    if bd.email_exists(email):
+        flash("Uncessuful registration - email already exists")
+    else:
+        bd.insert_tutor(name, status_claa, email, password)
 
     return render_template("signup-tutor.html")
 

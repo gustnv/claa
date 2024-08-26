@@ -1,4 +1,5 @@
 import mysql.connector
+import time
 
 config = {
     'user': 'root',
@@ -14,22 +15,24 @@ def login(email, password):
     cursor = cnx.cursor()
 
     query = ("select * from usuarios where email = %s and senha = %s")
-    query_data = (email, password)
-    cursor.execute(query, query_data)
 
-    # retorna apenas um registro ou None
+    hashed_password = hash(password)
+    data = (email, hashed_password)
+
+    cursor.execute(query, data)
+
     result = cursor.fetchone()
 
     cursor.close()
     cnx.close()
 
-    if type(result) == type(None):
+    if result is None:
         return False
     else:
         return result
 
 
-def register_tutor(name, status_claa, email, password):
+def email_exists(email):
     cnx = mysql.connector.connect(**config)
     cursor = cnx.cursor()
 
@@ -37,10 +40,34 @@ def register_tutor(name, status_claa, email, password):
     cursor.execute(query, (email, ))
     email_exists = cursor.fetchone()
 
-    if email_exists is None:
-        # todo: alerts users
+    cursor.close()
+    cnx.close()
 
-    print("email exists:", email_exists)
+    if email_exists is None:
+        return False
+    else:
+        return True
+
+
+def insert_tutor(name, status_claa, email, password):
+    cnx = mysql.connector.connect(**config)
+    cursor = cnx.cursor()
+
+    query = (
+        "insert into usuarios (nome, status_claa, email, senha) values (%s, %s, %s, %s)")
+
+    if status_claa == "Não.":
+        status_claa = "nao"
+    elif status_claa == "Sim, Titular.":
+        status_claa = "titular"
+    elif status_claa == "Sim, Suplente.":
+        status_claa = "suplente"
+
+    hashed_password = hash(password)
+
+    data = (name, status_claa, email, hashed_password)
+    cursor.execute(query, data)
+    cnx.commit()
 
     cursor.close()
     cnx.close()
@@ -56,21 +83,3 @@ def set_user():
 
 def get_group_pet():
     pass
-
-
-def get_email():
-    pass
-
-    # cnx = mysql.connector.connect(**config)
-    # cursor = cnx.cursor()
-
-    # add_usuario = ("insert into usuarios"
-    #                "(nome, membro_claa, email)"
-    #                "values (%s, %s, %s)")
-    # data_usuario = ('joao', 'nao', 'santosjoao301@gmail.com')
-
-    # cursor.execute(add_usuario, data_usuario)
-    # cnx.commit()
-
-    # cursor.close()
-    # cnx.close()
