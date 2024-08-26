@@ -1,15 +1,15 @@
 import mysql.connector
 
 config = {
-  'user': 'root',
-  'password': '2001',
-  'host': '127.0.0.1',
-  'database': 'claa',
-  'raise_on_warnings': True
+    'user': 'root',
+    'password': 'P4ssw0rd!',
+    'host': '127.0.0.1',
+    'database': 'claa',
+    'raise_on_warnings': True
 }
 
-# retorna false se não tem usuario
-def get_user(email, password):
+
+def login(email, password):
     cnx = mysql.connector.connect(**config)
     cursor = cnx.cursor()
 
@@ -23,32 +23,54 @@ def get_user(email, password):
     cursor.close()
     cnx.close()
 
-    if type(result) == type(None): 
+    if type(result) == type(None):
         return False
     else:
         return result
 
 
-def set_user():
-    pass
+def register_tutor(name, status_claa, email, password):
+    cnx = mysql.connector.connect(**config)
+    cursor = cnx.cursor()
 
-def get_group_pet():
-    pass
+    query = ("select 1 from usuarios where email = %s")
+    cursor.execute(query, (email, ))
+    email_exists = cursor.fetchone()
+
+    if email_exists is None:
+        # todo: alerts users
+
+    print("email exists:", email_exists)
+
+    cursor.close()
+    cnx.close()
+
 
 def signup():
     pass
 
 
-# cnx = mysql.connector.connect(**config)
-# cursor = cnx.cursor()
+def set_user():
+    pass
 
-# add_usuario = ("insert into usuarios"
-#                "(nome, membro_claa, email)"
-#                "values (%s, %s, %s)")
-# data_usuario = ('joao', 'nao', 'santosjoao301@gmail.com')
 
-# cursor.execute(add_usuario, data_usuario)
-# cnx.commit()    
+def get_group_pet():
+    pass
 
-# cursor.close()
-# cnx.close()         
+
+def get_email():
+    pass
+
+    # cnx = mysql.connector.connect(**config)
+    # cursor = cnx.cursor()
+
+    # add_usuario = ("insert into usuarios"
+    #                "(nome, membro_claa, email)"
+    #                "values (%s, %s, %s)")
+    # data_usuario = ('joao', 'nao', 'santosjoao301@gmail.com')
+
+    # cursor.execute(add_usuario, data_usuario)
+    # cnx.commit()
+
+    # cursor.close()
+    # cnx.close()
