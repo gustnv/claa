@@ -1,5 +1,5 @@
 import mysql.connector
-import time
+import bcrypt
 
 config = {
     'user': 'root',
@@ -10,26 +10,31 @@ config = {
 }
 
 
+def hash_password(password):
+    salt = bcrypt.gensalt()
+    hashed_password = bcrypt.hashpw(password.encode('utf-8'), salt)
+    return hashed_password.decode('utf-8')
+
+
 def login(email, password):
     cnx = mysql.connector.connect(**config)
     cursor = cnx.cursor()
 
-    query = ("select * from usuarios where email = %s and senha = %s")
-
-    hashed_password = hash(password)
-    data = (email, hashed_password)
-
-    cursor.execute(query, data)
+    query = "select senha from usuarios where email = %s"
+    cursor.execute(query, (email, ))
 
     result = cursor.fetchone()
-
     cursor.close()
     cnx.close()
 
     if result is None:
         return False
+
+    stored_password = result[0]
+    if bcrypt.checkpw(password.encode('utf-8'), stored_password.encode('utf-8')):
+        return True
     else:
-        return result
+        return False
 
 
 def email_exists(email):
@@ -54,7 +59,7 @@ def insert_tutor(name, status_claa, email, password):
     cursor = cnx.cursor()
 
     query = (
-        "insert into usuarios (nome, status_claa, email, senha) values (%s, %s, %s, %s)")
+        "insert into usuarios (nome, membro_claa, email, senha) values (%s, %s, %s, %s)")
 
     if status_claa == "Não.":
         status_claa = "nao"
@@ -63,7 +68,7 @@ def insert_tutor(name, status_claa, email, password):
     elif status_claa == "Sim, Suplente.":
         status_claa = "suplente"
 
-    hashed_password = hash(password)
+    hashed_password = hash_password(password)
 
     data = (name, status_claa, email, hashed_password)
     cursor.execute(query, data)

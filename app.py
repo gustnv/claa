@@ -13,7 +13,7 @@ app.config["SECRET_KEY"] = "CLAA"
 
 @app.route("/")
 def login_page():
-    return render_template("signup-tutor.html")
+    return render_template("login.html")
 
 
 @app.route("/login", methods=["POST"])
@@ -21,13 +21,13 @@ def login():
     email = request.form.get("email")
     password = request.form.get("password")
 
-    user = bd.login(email, password)
+    user_authenticated = bd.login(email, password)
 
-    if type(user) == bool:
-        print("\nUsuário não cadastrado\n")
+    if not user_authenticated:
+        print("\nUsuário não cadastrado ou senha incorreta\n")
         return render_template("login.html")
     else:
-        print("\nUsuario: ", user, " cadastrado\n")
+        print("\nUsuário autenticado com sucesso\n")
         return redirect("/panel")
 
 
