@@ -56,7 +56,6 @@
         <label class="block mb-2 text-sm font-medium text-gray-600" for="group-campus">Campus</label>
         <select class="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:ring focus:border-blue-300" id="group-campus" required>
           <option value="" disabled selected>Selecione um campus</option>
-          <option>Florianópolis</option>
         </select>
       </div>
 
@@ -64,7 +63,6 @@
         <label class="block mb-2 text-sm font-medium text-gray-600" for="group-center">Centro vinculado</label>
         <select class="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:ring focus:border-blue-300" id="group-center" required>
           <option value="" disabled selected>Selecione um centro</option>
-          <option>CTC</option>
         </select>
       </div>
 
@@ -86,6 +84,58 @@
         eyeIcon.setAttribute('d', 'M2.458 12C3.732 7.943 7.284 5 12 5c4.418 0 8 3.134 8 7s-3.582 7-8 7c-4.716 0-8.268-2.943-9.542-7z');
       }
     }
+
+    /**
+    * Represents an address with a campus and associated centers.
+    */
+    class Address {
+      /**
+      * Creates an instance of Address.
+      * @param {string} campus - The name of the campus.
+      * @param {string[]} centros - An array of centers associated with the campus.
+      */
+      constructor(campus, centros) {
+        this.campus = campus;
+        this.centros = centros;
+      }
+    }
+
+    const Addresses = [
+      { campus: "Araranguá", centros: ["CTS"] },
+      { campus: "Blumenau", centros: ["CTE"] },
+      { campus: "Curitibanos", centros: ["CCR"] },
+      { campus: "Florianópolis", centros: ["CCA", "CCB", "CCE", "CCS", "CCJ", "CDS", "CED", "CFH", "CFM", "CSE", "CTC", "PROGRAD"] },
+      { campus: "Joinville", centros: ["CTJ"] }
+    ];
+
+    const campusSelect = document.getElementById('group-campus');
+    const centerSelect = document.getElementById('group-center');
+
+    // Populate campus dropdown
+    Addresses.forEach(address => {
+      const option = document.createElement('option');
+      option.value = address.campus;
+      option.textContent = address.campus;
+      campusSelect.appendChild(option);
+    });
+
+    // Update centers dropdown based on selected campus
+    campusSelect.addEventListener('change', (event) => {
+      const selectedCampus = event.target.value;
+      const selectedAddress = Addresses.find(address => address.campus === selectedCampus);
+
+      // Clear existing options
+      centerSelect.innerHTML = '<option value="" disabled selected>Selecione um centro</option>';
+
+      if (selectedAddress) {
+        selectedAddress.centros.forEach(centro => {
+          const option = document.createElement('option');
+          option.value = centro;
+          option.textContent = centro;
+          centerSelect.appendChild(option);
+        });
+      }
+    });   
   </script>
 </body>
 </html>
