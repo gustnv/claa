@@ -8,11 +8,26 @@ config = {
   'raise_on_warnings': True
 }
 
-def have_user():
-    pass
+# retorna false se não tem usuario
+def get_user(email, password):
+    cnx = mysql.connector.connect(**config)
+    cursor = cnx.cursor()
 
-def get_user():
-    pass
+    query = ("select * from usuarios where email = %s and senha = %s")
+    query_data = (email, password)
+    cursor.execute(query, query_data)
+
+    # retorna apenas um registro ou None
+    result = cursor.fetchone()
+
+    cursor.close()
+    cnx.close()
+
+    if type(result) == type(None): 
+        return False
+    else:
+        return result
+
 
 def set_user():
     pass

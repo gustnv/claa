@@ -1,4 +1,5 @@
 from flask import Flask, render_template, redirect, request
+from bd import bd
 
 
 app = Flask(__name__)
@@ -7,18 +8,26 @@ app = Flask(__name__)
 # route: caminho do site | / caminho default
 # função: o que quer exibir na página
 
-@app.route('/')
+app.config["SECRET_KEY"] = "CLAA"
+
+@app.route("/")
 def login_page():
     return render_template("login.html")
 
 
-@app.route('/login', methods=['POST'])
+@app.route("/login", methods=["POST"])
 def login():
     email = request.form.get("email")
     password = request.form.get("password")
-    print(email)
-    print(password)
-    return redirect('/')
+
+    user = bd.get_user(email, password)
+
+    if type(user) == bool:
+        print("\nUsuário não cadastrado\n")
+        return redirect("/")
+    else:
+        print("\nUsuario: ", user, " cadastrado\n")
+        return redirect("/panel")
 
 
 @app.route("/signup")
