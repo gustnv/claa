@@ -132,9 +132,25 @@ CREATE TABLE `tutors` (
 -- Dumping data for tables
 --
 
-LOCK TABLES `unscheduled_activities`, `scheduled_activities`, `groups`, `reports`, `tutors` WRITE;
-/*!40000 ALTER TABLE `unscheduled_activities`, `scheduled_activities`, `groups`, `reports`, `tutors` DISABLE KEYS */;
-/*!40000 ALTER TABLE `unscheduled_activities`, `scheduled_activities`, `groups`, `reports`, `tutors` ENABLE KEYS */;
+LOCK TABLES 
+  `unscheduled_activities` WRITE, 
+  `scheduled_activities` WRITE, 
+  `groups` WRITE, 
+  `reports` WRITE, 
+  `tutors` WRITE;
+
+/*!40000 ALTER TABLE `unscheduled_activities` DISABLE KEYS */;
+/*!40000 ALTER TABLE `scheduled_activities` DISABLE KEYS */;
+/*!40000 ALTER TABLE `groups` DISABLE KEYS */;
+/*!40000 ALTER TABLE `reports` DISABLE KEYS */;
+/*!40000 ALTER TABLE `tutors` DISABLE KEYS */;
+
+/*!40000 ALTER TABLE `unscheduled_activities` ENABLE KEYS */;
+/*!40000 ALTER TABLE `scheduled_activities` ENABLE KEYS */;
+/*!40000 ALTER TABLE `groups` ENABLE KEYS */;
+/*!40000 ALTER TABLE `reports` ENABLE KEYS */;
+/*!40000 ALTER TABLE `tutors` ENABLE KEYS */;
+
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
