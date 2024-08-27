@@ -16,13 +16,13 @@
 
     <form action="/signup-group" method="post">
       <div class="mb-4">
-        <label class="block mb-2 text-sm font-medium text-gray-600" for="group-name">Nome do grupo</label>
-        <input name="name" class="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:ring focus:border-blue-300" type="text" id="group-name" value="" required>
-      </div>
-
-      <div class="mb-4">
         <label class="block mb-2 text-sm font-medium text-gray-600" for="group-email">Email do grupo</label>
         <input name="email" class="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:ring focus:border-blue-300" type="email" id="group-email" value="" required>
+      </div>
+        
+      <div class="mb-4">
+        <label class="block mb-2 text-sm font-medium text-gray-600" for="group-name">Nome do grupo</label>
+        <input name="name" class="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:ring focus:border-blue-300" type="text" id="group-name" value="" required>
       </div>
 
       {% set message = get_flashed_messages() %}
