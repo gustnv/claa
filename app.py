@@ -24,6 +24,7 @@ def login():
     user_authenticated = bd.login(email, password)
 
     if not user_authenticated:
+        flash("Uncessuful login - user not registered or incorrect password")
         print("\nUsuário não cadastrado ou senha incorreta\n")
         return render_template("login.html")
     else:

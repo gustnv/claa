@@ -20,7 +20,7 @@ def login(email, password):
     cnx = mysql.connector.connect(**config)
     cursor = cnx.cursor()
 
-    query = "select senha from usuarios where email = %s"
+    query = "select password from tutors where email = %s"
     cursor.execute(query, (email, ))
 
     result = cursor.fetchone()
@@ -41,7 +41,7 @@ def tutor_exists(email):
     cnx = mysql.connector.connect(**config)
     cursor = cnx.cursor()
 
-    query = ("select 1 from usuarios where email = %s")
+    query = ("select 1 from tutors where email = %s")
     cursor.execute(query, (email, ))
     tutor_exists = cursor.fetchone()
 
@@ -59,14 +59,14 @@ def insert_tutor(name, status_claa, email, password):
     cursor = cnx.cursor()
 
     query = (
-        "insert into usuarios (nome, membro_claa, email, senha) values (%s, %s, %s, %s)")
+        "insert into tutors (name, status_claa, email, password) values (%s, %s, %s, %s)")
 
     if status_claa == "Não.":
-        status_claa = "nao"
+        status_claa = "no"
     elif status_claa == "Sim, Titular.":
-        status_claa = "titular"
+        status_claa = "holder"
     elif status_claa == "Sim, Suplente.":
-        status_claa = "suplente"
+        status_claa = "substitute"
 
     hashed_password = hash_password(password)
 
@@ -82,7 +82,7 @@ def group_exists(email):
     cnx = mysql.connector.connect(**config)
     cursor = cnx.cursor()
 
-    query = ("select 1 from grupos_pet where email = %s")
+    query = ("select 1 from `groups` where email = %s")
     cursor.execute(query, (email, ))
     group_exists = cursor.fetchone()
 
@@ -96,17 +96,20 @@ def group_exists(email):
 
 
 def insert_group(name, email, insta, page, nof_scholarships, nof_volunteers, address, campus, center):
+    # todo fix
+    email_tutor = "1@1"  # it should exists in tutors table
+
     cnx = mysql.connector.connect(**config)
     cursor = cnx.cursor()
 
     query = (
-        "INSERT INTO grupos_pet "
-        "(nome, email, instagram, pagina, nof_bolsistas, nof_voluntarios, endereco, campus, centro) "
-        "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"
+        "INSERT INTO `groups` "
+        "(name, email, instagram, webpage, nof_scholarships, nof_volunteers, address, campus, center, email_tutor) "
+        "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
     )
 
     data = (name, email, insta, page, nof_scholarships,
-            nof_volunteers, address, campus, center)
+            nof_volunteers, address, campus, center, email_tutor)
 
     cursor.execute(query, data)
     cnx.commit()

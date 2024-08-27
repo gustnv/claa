@@ -121,8 +121,8 @@ DROP TABLE IF EXISTS `tutors`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `tutors` (
   `email` varchar(100) NOT NULL,
-  `senha` varchar(60) NOT NULL,
-  `nome` varchar(100) NOT NULL,
+  `password` varchar(60) NOT NULL,
+  `name` varchar(100) NOT NULL,
   `status_claa` enum('no','substitute','holder') NOT NULL,
   PRIMARY KEY (`email`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
