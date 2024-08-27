@@ -13,7 +13,7 @@ app.config["SECRET_KEY"] = "CLAA"
 
 @app.route("/")
 def home():
-    return render_template("signup-group.html")
+    return render_template("report-1.html")
 
 
 @app.route("/login", methods=["POST"])

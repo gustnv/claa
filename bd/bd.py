@@ -82,7 +82,7 @@ def group_exists(email):
     cnx = mysql.connector.connect(**config)
     cursor = cnx.cursor()
 
-    query = ("select 1 from `groups` where email = %s")
+    query = ("select 1 from claa.groups where email = %s")
     cursor.execute(query, (email, ))
     group_exists = cursor.fetchone()
 
@@ -103,7 +103,7 @@ def insert_group(name, email, insta, page, nof_scholarships, nof_volunteers, add
     cursor = cnx.cursor()
 
     query = (
-        "INSERT INTO `groups` "
+        "INSERT INTO claa.groups "
         "(name, email, instagram, webpage, nof_scholarships, nof_volunteers, address, campus, center, email_tutor) "
         "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
     )
