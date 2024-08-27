@@ -33,13 +33,13 @@ CREATE TABLE `atividades_nao_programadas` (
   `horas_extensao` int NOT NULL DEFAULT '0',
   `ano` year NOT NULL,
   `id_relatorio` int NOT NULL,
-  `id_grupo_pet` int NOT NULL,
+  `email_grupo_pet` varchar(50) NOT NULL,  -- Changed from int to varchar(50)
   PRIMARY KEY (`id_atividade_nao_prog`),
   KEY `id_relatorio` (`id_relatorio`),
-  KEY `id_grupo_pet` (`id_grupo_pet`),
+  KEY `email_grupo_pet` (`email_grupo_pet`),
   CONSTRAINT `atividades_nao_programadas_ibfk_1` FOREIGN KEY (`id_relatorio`) REFERENCES `relatorios` (`id_relatorio`),
-  CONSTRAINT `atividades_nao_programadas_ibfk_2` FOREIGN KEY (`id_grupo_pet`) REFERENCES `grupos_pet` (`id_grupo_pet`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
+  CONSTRAINT `atividades_nao_programadas_ibfk_2` FOREIGN KEY (`email_grupo_pet`) REFERENCES `grupos_pet` (`email`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -69,13 +69,13 @@ CREATE TABLE `atividades_programadas` (
   `horas_extensao` int NOT NULL DEFAULT '0',
   `ano` year NOT NULL,
   `id_relatorio` int NOT NULL,
-  `id_grupo_pet` int NOT NULL,
+  `email_grupo_pet` varchar(50) NOT NULL,  -- Changed from int to varchar(50)
   PRIMARY KEY (`id_atividade_prog`),
   KEY `id_relatorio` (`id_relatorio`),
-  KEY `id_grupo_pet` (`id_grupo_pet`),
+  KEY `email_grupo_pet` (`email_grupo_pet`),
   CONSTRAINT `atividades_programadas_ibfk_1` FOREIGN KEY (`id_relatorio`) REFERENCES `relatorios` (`id_relatorio`),
-  CONSTRAINT `atividades_programadas_ibfk_2` FOREIGN KEY (`id_grupo_pet`) REFERENCES `grupos_pet` (`id_grupo_pet`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
+  CONSTRAINT `atividades_programadas_ibfk_2` FOREIGN KEY (`email_grupo_pet`) REFERENCES `grupos_pet` (`email`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -95,23 +95,20 @@ DROP TABLE IF EXISTS `grupos_pet`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `grupos_pet` (
-  `id_grupo_pet` int NOT NULL AUTO_INCREMENT,
-  `nome_grupo` varchar(50) NOT NULL,
-  `email_grupo` varchar(50) DEFAULT NULL,
-  `instagram_grupo` varchar(100) DEFAULT NULL,
-  `pagina_grupo` varchar(100) DEFAULT NULL,
-  `bolsistas` int NOT NULL,
-  `voluntarios` int NOT NULL,
-  `sala` varchar(25) DEFAULT NULL,
-  `campus` enum('florianopolis','curitibanos','joinvile','blumenau') NOT NULL,
-  `centro` enum('cts','cte','ccr','ctc','ccb','ctj','cca','cce','ccs','ccj','cds','ced','cfh','cfm','cse') NOT NULL,
-  `email_tutor` varchar(50) NOT NULL,
-  PRIMARY KEY (`id_grupo_pet`),
-  UNIQUE KEY `nome_grupo` (`nome_grupo`),
-  UNIQUE KEY `email_grupo` (`email_grupo`),
+  `nome` varchar(50) NOT NULL,
+  `email` varchar(50) NOT NULL,
+  `instagram` varchar(100) DEFAULT NULL,
+  `pagina` varchar(100) DEFAULT NULL,
+  `nof_bolsistas` int NOT NULL,
+  `nof_voluntarios` int NOT NULL,
+  `endereco` varchar(100) DEFAULT NULL,
+  `campus` enum('Araranguá','Florianópolis','Curitibanos','Joinvile','Blumenau') NOT NULL,
+  `centro` enum('CTS','CTE','CCR','CTC','CCB','CTJ','CCA','CCE','CCS','CCJ','CDS','CED','CFH','CFM','CSE','PROGRAD') NOT NULL,
+  `email_tutor` varchar(50) DEFAULT NULL,/*todo remove this default, it should be not null*/
+  PRIMARY KEY (`email`),
   KEY `email_tutor` (`email_tutor`),
   CONSTRAINT `grupos_pet_ibfk_1` FOREIGN KEY (`email_tutor`) REFERENCES `usuarios` (`email`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -145,11 +142,11 @@ CREATE TABLE `relatorios` (
   `desc_articulacao_politica` varchar(1000) NOT NULL,
   `desc_articulacao_atividades` varchar(1000) NOT NULL,
   `ano` year NOT NULL,
-  `id_grupo` int NOT NULL,
+  `id_grupo` varchar(50) NOT NULL,  -- Changed from int to varchar(50)
   PRIMARY KEY (`id_relatorio`),
   KEY `id_grupo` (`id_grupo`),
-  CONSTRAINT `relatorios_ibfk_1` FOREIGN KEY (`id_grupo`) REFERENCES `grupos_pet` (`id_grupo_pet`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
+  CONSTRAINT `relatorios_ibfk_1` FOREIGN KEY (`id_grupo`) REFERENCES `grupos_pet` (`email`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -169,12 +166,12 @@ DROP TABLE IF EXISTS `usuarios`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `usuarios` (
-  `nome` varchar(100) NOT NULL,
-  `membro_claa` enum('nao','suplente','titular') NOT NULL,
   `email` varchar(50) NOT NULL,
   `senha` varchar(60) NOT NULL,
+  `nome` varchar(100) NOT NULL,
+  `membro_claa` enum('nao','suplente','titular') NOT NULL,
   PRIMARY KEY (`email`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -194,5 +191,3 @@ UNLOCK TABLES;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
-
--- Dump completed on 2024-08-21 15:42:04

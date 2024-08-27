@@ -37,18 +37,18 @@ def login(email, password):
         return False
 
 
-def email_exists(email):
+def tutor_exists(email):
     cnx = mysql.connector.connect(**config)
     cursor = cnx.cursor()
 
     query = ("select 1 from usuarios where email = %s")
     cursor.execute(query, (email, ))
-    email_exists = cursor.fetchone()
+    tutor_exists = cursor.fetchone()
 
     cursor.close()
     cnx.close()
 
-    if email_exists is None:
+    if tutor_exists is None:
         return False
     else:
         return True
@@ -78,8 +78,41 @@ def insert_tutor(name, status_claa, email, password):
     cnx.close()
 
 
-def signup():
-    pass
+def group_exists(email):
+    cnx = mysql.connector.connect(**config)
+    cursor = cnx.cursor()
+
+    query = ("select 1 from grupos_pet where email = %s")
+    cursor.execute(query, (email, ))
+    group_exists = cursor.fetchone()
+
+    cursor.close()
+    cnx.close()
+
+    if group_exists is None:
+        return False
+    else:
+        return True
+
+
+def insert_group(name, email, insta, page, nof_scholarships, nof_volunteers, address, campus, center):
+    cnx = mysql.connector.connect(**config)
+    cursor = cnx.cursor()
+
+    query = (
+        "INSERT INTO grupos_pet "
+        "(nome, email, instagram, pagina, nof_bolsistas, nof_voluntarios, endereco, campus, centro) "
+        "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"
+    )
+
+    data = (name, email, insta, page, nof_scholarships,
+            nof_volunteers, address, campus, center)
+
+    cursor.execute(query, data)
+    cnx.commit()
+
+    cursor.close()
+    cnx.close()
 
 
 def set_user():

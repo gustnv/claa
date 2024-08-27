@@ -12,8 +12,8 @@ app.config["SECRET_KEY"] = "CLAA"
 
 
 @app.route("/")
-def login_page():
-    return render_template("login.html")
+def home():
+    return render_template("signup-group.html")
 
 
 @app.route("/login", methods=["POST"])
@@ -32,13 +32,13 @@ def login():
 
 
 @app.route("/signup-tutor", methods=["POST"])
-def signup_page():
+def signup_tutor():
     name = request.form.get("name")
     status_claa = request.form.get("status-claa")
     email = request.form.get("email")
     password = request.form.get("password")
 
-    if bd.email_exists(email):
+    if bd.tutor_exists(email):
         flash("Uncessuful registration - email already exists")
     else:
         bd.insert_tutor(name, status_claa, email, password)
@@ -46,19 +46,25 @@ def signup_page():
     return render_template("signup-tutor.html")
 
 
-@app.route("/signup1")
-def signup1_page():
-    return render_template("signup1.html")
+@app.route("/signup-group", methods=["POST"])
+def signup_group_page():
+    name = request.form.get("name")
+    email = request.form.get("email")
+    insta = request.form.get("insta")
+    page = request.form.get("page")
+    nof_scholarships = request.form.get("nof-scholarships")
+    nof_volunteers = request.form.get("nof-volunteers")
+    address = request.form.get("address")
+    campus = request.form.get("campus")
+    center = request.form.get("center")
 
+    if bd.group_exists(email):
+        flash("Uncessuful registration - email already exists")
+    else:
+        bd.insert_group(name, email, insta, page, nof_scholarships,
+                        nof_volunteers, address, campus, center)
 
-@app.route("/panel")
-def panel_page():
-    return render_template("panel.html")
-
-
-@app.route("/profile")
-def profile_page():
-    return render_template("profile.html")
+    return render_template("signup-group.html")
 
 
 @app.route("/report-0")
@@ -109,6 +115,16 @@ def report8_page():
 @app.route("/report-9")
 def report9_page():
     return render_template("report-9.html")
+
+
+@app.route("/panel")
+def panel_page():
+    return render_template("panel.html")
+
+
+@app.route("/profile")
+def profile_page():
+    return render_template("profile.html")
 
 
 if __name__ in "__main__":

@@ -14,54 +14,61 @@
   <div class="w-full max-w-lg p-8 bg-white rounded-lg shadow-md">
     <h2 class="mb-6 text-2xl font-semibold text-gray-700">Registrar</h2>
 
-    <form action="panel.html">
+    <form action="/signup-group" method="post">
       <div class="mb-4">
         <label class="block mb-2 text-sm font-medium text-gray-600" for="group-name">Nome do grupo</label>
-        <input class="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:ring focus:border-blue-300" type="text" id="group-name" value="" required>
+        <input name="name" class="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:ring focus:border-blue-300" type="text" id="group-name" value="" required>
       </div>
 
       <div class="mb-4">
         <label class="block mb-2 text-sm font-medium text-gray-600" for="group-email">Email do grupo</label>
-        <input class="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:ring focus:border-blue-300" type="email" id="group-email" value="" required>
+        <input name="email" class="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:ring focus:border-blue-300" type="email" id="group-email" value="" required>
       </div>
+
+      {% set message = get_flashed_messages() %}
+      {% if message %}
+        <div class="mb-4 p-4 text-sm text-red-800 bg-red-100 border border-red-300 rounded-lg">
+          O email já está cadastrado.
+        </div>
+      {% endif %}
 
       <div class="mb-4">
         <label class="block mb-2 text-sm font-medium text-gray-600" for="group-instagram">Instagram do grupo</label>
-        <input class="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:ring focus:border-blue-300" type="text" id="group-instagram" value="" required>
+        <input name="insta" class="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:ring focus:border-blue-300" type="text" id="group-instagram" value="" required>
       </div>
 
       <div class="mb-4">
         <label class="block mb-2 text-sm font-medium text-gray-600" for="group-page">Página do grupo</label>
-        <input class="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:ring focus:border-blue-300" type="text" id="group-page" value="" required>
+        <input name="page" class="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:ring focus:border-blue-300" type="text" id="group-page" value="" required>
       </div>
 
       <div class="mb-4">
         <label class="block mb-2 text-sm font-medium text-gray-600" for="group-scholarship-number">Número de bolsistas</label>
-        <input class="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:ring focus:border-blue-300" type="number" id="group-scholarship-number" value="" required>
+        <input name="nof-scholarships" class="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:ring focus:border-blue-300" type="number" id="group-scholarship-number" value="" required>
       </div>
 
       <div class="mb-8">
         <label class="block mb-2 text-sm font-medium text-gray-600" for="group-volunteer-number">Número de voluntários</label>
-        <input class="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:ring focus:border-blue-300" type="number" id="group-volunteer-number" value="" required>
+        <input name="nof-volunteers" class="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:ring focus:border-blue-300" type="number" id="group-volunteer-number" value="" required>
       </div>
 
       <h3 class="mb-4 text-lg font-medium text-gray-700">Endereço</h3>
 
       <div class="mb-4">
         <label class="block mb-2 text-sm font-medium text-gray-600" for="group-room">Sala/bloco</label>
-        <input class="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:ring focus:border-blue-300" type="text" id="group-room" value="" required>
+        <input name="address" class="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:ring focus:border-blue-300" type="text" id="group-room" value="" required>
       </div>
 
       <div class="mb-4">
         <label class="block mb-2 text-sm font-medium text-gray-600" for="group-campus">Campus</label>
-        <select class="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:ring focus:border-blue-300" id="group-campus" required>
+        <select name="campus" class="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:ring focus:border-blue-300" id="group-campus" required>
           <option value="" disabled selected>Selecione um campus</option>
         </select>
       </div>
 
       <div class="mb-12">
         <label class="block mb-2 text-sm font-medium text-gray-600" for="group-center">Centro vinculado</label>
-        <select class="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:ring focus:border-blue-300" id="group-center" required>
+        <select name="center" class="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:ring focus:border-blue-300" id="group-center" required>
           <option value="" disabled selected>Selecione um centro</option>
         </select>
       </div>
