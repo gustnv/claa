@@ -1,3 +1,4 @@
+from flask import session
 import mysql.connector
 import bcrypt
 from datetime import datetime
@@ -116,25 +117,28 @@ def insert_group(name, email, insta, page, nof_scholarships, nof_volunteers,
     cnx.close()
 
 
-report = {}
-
-
-def update_report(**kwargs):
-    report[[*kwargs.keys()][0]] = [*kwargs.values()][0]
+def reset_report_session():
+    # session_keys = [
+    #     'scheduled_activities', 'unscheduled_activities',
+    #     'activities_articulation', 'politics_articulation',
+    #     'selection_students', 'permanence_students',
+    #     'ufsc_target_public', 'society_target_public',
+    #     'infrastructure_condition', 'infrastructure_description',
+    #     'tools_condition', 'tools_description',
+    #     'costing_condition', 'costing_description']
+    #
+    # for key in session_keys:
+    #     session.pop(key, None)
+    session.clear()
 
 
 def insert_report():
-    global report
-
-    # todo fix
-    group_email = "1@1"  # it should exist in the groups table
+    for key, value in session.items():
+        print(f"{key}: {value}")
 
     cnx = mysql.connector.connect(**config)
     cursor = cnx.cursor()
 
-    print(report)
-
-    # Insert into reports table
     query = (
         "INSERT INTO reports (activities_articulation, politics_articulation, "
         "selection_students, permanence_students, ufsc_target_public, "
@@ -144,32 +148,30 @@ def insert_report():
         "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
     )
 
-    year = datetime.now().year
+    group_email = "1@1"  # Replace with dynamic value as needed
 
     data = (
-        report['activities_articulation'],
-        report['politics_articulation'],
-        report['selection_students'],
-        report['permanence_students'],
-        report['ufsc_target_public'],
-        report['society_target_public'],
-        report['infrastructure_condition'],
-        report['infrastructure_description'],
-        report['tools_condition'],
-        report['tools_description'],
-        report['costing_condition'],
-        report['costing_description'],
-        year,
+        session.get('activities_articulation'),
+        session.get('politics_articulation'),
+        session.get('selection_students'),
+        session.get('permanence_students'),
+        session.get('ufsc_target_public'),
+        session.get('society_target_public'),
+        session.get('infrastructure_condition'),
+        session.get('infrastructure_description'),
+        session.get('tools_condition'),
+        session.get('tools_description'),
+        session.get('costing_condition'),
+        session.get('costing_description'),
+        datetime.now().year,
         group_email
     )
 
     cursor.execute(query, data)
-    cnx.commit()
-
     report_id = cursor.lastrowid
 
     # Insert into scheduled_activities table
-    for activity in report['scheduled_activities']:
+    for activity in session.get('scheduled_activities', []):
         query = (
             "INSERT INTO scheduled_activities (name, carrying_out,"
             " total_hours, teaching_hours, research_hours, extension_hours,"
@@ -189,7 +191,7 @@ def insert_report():
         cursor.execute(query, data)
 
     # Insert into unscheduled_activities table
-    for activity in report['unscheduled_activities']:
+    for activity in session.get('unscheduled_activities', []):
         query = (
             "INSERT INTO unscheduled_activities (name, justification,"
             " total_hours, teaching_hours, research_hours, extension_hours,"
@@ -212,4 +214,4 @@ def insert_report():
     cursor.close()
     cnx.close()
 
-    report = {}
+    reset_report_session()

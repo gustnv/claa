@@ -1,4 +1,4 @@
-from flask import Flask, flash, render_template, redirect, request
+from flask import Flask, session, flash, render_template, redirect, request
 from bd import bd
 
 
@@ -83,6 +83,7 @@ def submit_signup_group():
 
 @app.route("/report-0", methods=["GET"])
 def report_0():
+    bd.reset_report_session()
     return render_template("report-0.html")
 
 
@@ -90,7 +91,6 @@ def report_0():
 def submit_report_0():
     activities = []
 
-    # max activities number equal to one hundred
     for i in range(100):
         name = request.form.get(f"name-{i}")
         carrying_out = request.form.get(f"carrying-out-{i}")
@@ -99,7 +99,6 @@ def submit_report_0():
         research_hours = request.form.get(f"research-hours-{i}")
         extension_hours = request.form.get(f"extension-hours-{i}")
 
-        # check the existence
         if name:
             activity = {
                 "name": name,
@@ -107,26 +106,24 @@ def submit_report_0():
                 "total_hours": total_hours,
                 "teaching_hours": teaching_hours or '0',
                 "research_hours": research_hours or '0',
-                "extension_hours": extension_hours or '0'
+                "extension_hours": extension_hours or '0',
+                "id": i
             }
             activities.append(activity)
 
-    print(activities)
-
-    bd.update_report(scheduled_activities=activities)
+    session['scheduled_activities'] = activities
     return redirect("/report-1")
 
 
-@ app.route("/report-1", methods=["GET"])
+@app.route("/report-1", methods=["GET"])
 def report_1():
     return render_template("report-1.html")
 
 
-@ app.route("/submit-report-1", methods=["POST"])
+@app.route("/submit-report-1", methods=["POST"])
 def submit_report_1():
     activities = []
 
-    # max activities number equal to one hundred
     for i in range(100):
         name = request.form.get(f"name-{i}")
         justification = request.form.get(f"justification-{i}")
@@ -135,7 +132,6 @@ def submit_report_1():
         research_hours = request.form.get(f"research-hours-{i}")
         extension_hours = request.form.get(f"extension-hours-{i}")
 
-        # check the existence
         if name:
             activity = {
                 "name": name,
@@ -143,138 +139,123 @@ def submit_report_1():
                 "total_hours": total_hours,
                 "teaching_hours": teaching_hours or '0',
                 "research_hours": research_hours or '0',
-                "extension_hours": extension_hours or '0'
+                "extension_hours": extension_hours or '0',
+                "id": i
             }
             activities.append(activity)
 
-    print(activities)
-
-    bd.update_report(unscheduled_activities=activities)
+    session['unscheduled_activities'] = activities
     return redirect("/report-2")
 
 
-@ app.route("/report-2", methods=["GET"])
+@app.route("/report-2", methods=["GET"])
 def report_2():
     return render_template("report-2.html")
 
 
-@ app.route("/submit-report-2", methods=["POST"])
+@app.route("/submit-report-2", methods=["POST"])
 def submit_report_2():
-    activities_articulation = request.form.get("activities-articulation")
-    bd.update_report(activities_articulation=activities_articulation)
-
+    session['activities_articulation'] = request.form.get(
+        "activities-articulation")
     return redirect("/report-3")
 
 
-@ app.route("/report-3", methods=["GET"])
+@app.route("/report-3", methods=["GET"])
 def report_3():
     return render_template("report-3.html")
 
 
-@ app.route("/submit-report-3", methods=["POST"])
+@app.route("/submit-report-3", methods=["POST"])
 def submit_report_3():
-    politics_articulation = request.form.get("politics-articulation")
-    bd.update_report(politics_articulation=politics_articulation)
-
+    session['politics_articulation'] = request.form.get(
+        "politics-articulation")
     return redirect("/report-4")
 
 
-@ app.route("/report-4", methods=["get"])
+@app.route("/report-4", methods=["GET"])
 def report_4():
     return render_template("report-4.html")
 
 
-@ app.route("/submit-report-4", methods=["POST"])
+@app.route("/submit-report-4", methods=["POST"])
 def submit_report_4():
-    selection_students = request.form.get("selection-students")
-    bd.update_report(selection_students=selection_students)
-
+    session['selection_students'] = request.form.get("selection-students")
     return redirect("/report-5")
 
 
-@ app.route("/report-5", methods=["GET"])
+@app.route("/report-5", methods=["GET"])
 def report_5():
     return render_template("report-5.html")
 
 
-@ app.route("/submit-report-5", methods=["POST"])
+@app.route("/submit-report-5", methods=["POST"])
 def submit_report_5():
-    permanence_students = request.form.get("permanence-students")
-    bd.update_report(permanence_students=permanence_students)
-
+    session['permanence_students'] = request.form.get("permanence-students")
     return redirect("/report-6")
 
 
-@ app.route("/report-6", methods=["GET"])
+@app.route("/report-6", methods=["GET"])
 def report_6():
     return render_template("report-6.html")
 
 
-@ app.route("/submit-report-6", methods=["POST"])
+@app.route("/submit-report-6", methods=["POST"])
 def submit_report_6():
-    ufsc_target_public = request.form.get("ufsc-target-public")
-    bd.update_report(ufsc_target_public=ufsc_target_public)
-
-    society_target_public = request.form.get("society-target-public")
-    bd.update_report(society_target_public=society_target_public)
-
+    session['ufsc_target_public'] = request.form.get("ufsc-target-public")
+    session['society_target_public'] = request.form.get(
+        "society-target-public")
     return redirect("/report-7")
 
 
-@ app.route("/report-7", methods=["GET"])
+@app.route("/report-7", methods=["GET"])
 def report_7():
     return render_template("report-7.html")
 
 
-@ app.route("/submit-report-7", methods=["POST"])
+@app.route("/submit-report-7", methods=["POST"])
 def submit_report_7():
-    infrastructure_condition = request.form.get("infrastructure-condition")
-    bd.update_report(infrastructure_condition=infrastructure_condition)
-
-    infrastructure_description = request.form.get("infrastructure-description")
-    bd.update_report(infrastructure_description=infrastructure_description)
-
+    session['infrastructure_condition'] = request.form.get(
+        "infrastructure-condition")
+    session['infrastructure_description'] = request.form.get(
+        "infrastructure-description")
     return redirect("/report-8")
 
 
-@ app.route("/report-8", methods=["GET"])
+@app.route("/report-8", methods=["GET"])
 def report_8():
     return render_template("report-8.html")
 
 
-@ app.route("/submit-report-8", methods=["POST"])
+@app.route("/submit-report-8", methods=["POST"])
 def submit_report_8():
-    tools_condition = request.form.get("tools-condition")
-    bd.update_report(tools_condition=tools_condition)
-
-    tools_description = request.form.get("tools-description")
-    bd.update_report(tools_description=tools_description)
-
+    session['tools_condition'] = request.form.get("tools-condition")
+    session['tools_description'] = request.form.get("tools-description")
     return redirect("/report-9")
 
 
-@ app.route("/report-9", methods=["GET"])
+@app.route("/report-9", methods=["GET"])
 def report_9():
     return render_template("report-9.html")
 
 
-@ app.route("/submit-report-9", methods=["POST"])
+@app.route("/submit-report-9", methods=["POST"])
 def submit_report_9():
-    costing_condition = request.form.get("costing-condition")
-    bd.update_report(costing_condition=costing_condition)
+    session['costing_condition'] = request.form.get("costing-condition")
+    session['costing_description'] = request.form.get("costing-description")
+    return redirect("/submit-report")
 
-    costing_description = request.form.get("costing-description")
-    bd.update_report(costing_description=costing_description)
 
+@app.route("/submit-report", methods=["GET"])
+def submit_report():
     bd.insert_report()
 
     return redirect("/panel")
 
 
-@ app.route("/panel")
+@app.route("/panel", methods=["GET"])
 def panel():
     return render_template("panel.html")
 
 
-if __name__ in "__main__":
+if __name__ == "__main__":
     app.run(debug=True)
