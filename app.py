@@ -81,11 +81,24 @@ def submit_signup_group():
         return redirect("/panel")
 
 
-"""
+@app.route("/report-0", methods=["GET"])
+def report_0():
+    return render_template("report-0.html")
 
-dsfjadskjf
 
-"""
+@app.route("/submit-report-0", methods=["POST"])
+def submit_report_0():
+    return redirect("/report-1")
+
+
+@app.route("/report-1", methods=["GET"])
+def report_1():
+    return render_template("report-1.html")
+
+
+@app.route("/submit-report-1", methods=["POST"])
+def submit_report_1():
+    return redirect("/report-2")
 
 
 @app.route("/report-2", methods=["GET"])
