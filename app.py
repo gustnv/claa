@@ -13,7 +13,7 @@ app.config["SECRET_KEY"] = "CLAA"
 
 @app.route("/")
 def home():
-    return redirect("/signup-group")
+    return redirect("/report-0")
 
 
 @app.route("/login", methods=["GET"])
@@ -88,25 +88,77 @@ def report_0():
 
 @app.route("/submit-report-0", methods=["POST"])
 def submit_report_0():
+    activities = []
+
+    # max activities number equal to one hundred
+    for i in range(100):
+        name = request.form.get(f"name-{i}")
+        carrying_out = request.form.get(f"carrying-out-{i}")
+        total_hours = request.form.get(f"total-hours-{i}")
+        teaching_hours = request.form.get(f"teaching-hours-{i}")
+        research_hours = request.form.get(f"research-hours-{i}")
+        extension_hours = request.form.get(f"extension-hours-{i}")
+
+        # check the existence
+        if name:
+            activity = {
+                "name": name,
+                "carrying_out": carrying_out,
+                "total_hours": total_hours,
+                "teaching_hours": teaching_hours or '0',
+                "research_hours": research_hours or '0',
+                "extension_hours": extension_hours or '0'
+            }
+            activities.append(activity)
+
+    print(activities)
+
+    bd.update_report(scheduled_activities=activities)
     return redirect("/report-1")
 
 
-@app.route("/report-1", methods=["GET"])
+@ app.route("/report-1", methods=["GET"])
 def report_1():
     return render_template("report-1.html")
 
 
-@app.route("/submit-report-1", methods=["POST"])
+@ app.route("/submit-report-1", methods=["POST"])
 def submit_report_1():
+    activities = []
+
+    # max activities number equal to one hundred
+    for i in range(100):
+        name = request.form.get(f"name-{i}")
+        justification = request.form.get(f"justification-{i}")
+        total_hours = request.form.get(f"total-hours-{i}")
+        teaching_hours = request.form.get(f"teaching-hours-{i}")
+        research_hours = request.form.get(f"research-hours-{i}")
+        extension_hours = request.form.get(f"extension-hours-{i}")
+
+        # check the existence
+        if name:
+            activity = {
+                "name": name,
+                "justification": justification,
+                "total_hours": total_hours,
+                "teaching_hours": teaching_hours or '0',
+                "research_hours": research_hours or '0',
+                "extension_hours": extension_hours or '0'
+            }
+            activities.append(activity)
+
+    print(activities)
+
+    bd.update_report(unscheduled_activities=activities)
     return redirect("/report-2")
 
 
-@app.route("/report-2", methods=["GET"])
+@ app.route("/report-2", methods=["GET"])
 def report_2():
     return render_template("report-2.html")
 
 
-@app.route("/submit-report-2", methods=["POST"])
+@ app.route("/submit-report-2", methods=["POST"])
 def submit_report_2():
     activities_articulation = request.form.get("activities-articulation")
     bd.update_report(activities_articulation=activities_articulation)
@@ -114,12 +166,12 @@ def submit_report_2():
     return redirect("/report-3")
 
 
-@app.route("/report-3", methods=["GET"])
+@ app.route("/report-3", methods=["GET"])
 def report_3():
     return render_template("report-3.html")
 
 
-@app.route("/submit-report-3", methods=["POST"])
+@ app.route("/submit-report-3", methods=["POST"])
 def submit_report_3():
     politics_articulation = request.form.get("politics-articulation")
     bd.update_report(politics_articulation=politics_articulation)
@@ -127,7 +179,7 @@ def submit_report_3():
     return redirect("/report-4")
 
 
-@app.route("/report-4", methods=["get"])
+@ app.route("/report-4", methods=["get"])
 def report_4():
     return render_template("report-4.html")
 
@@ -140,7 +192,7 @@ def submit_report_4():
     return redirect("/report-5")
 
 
-@app.route("/report-5", methods=["GET"])
+@ app.route("/report-5", methods=["GET"])
 def report_5():
     return render_template("report-5.html")
 
@@ -153,7 +205,7 @@ def submit_report_5():
     return redirect("/report-6")
 
 
-@app.route("/report-6", methods=["GET"])
+@ app.route("/report-6", methods=["GET"])
 def report_6():
     return render_template("report-6.html")
 
@@ -169,7 +221,7 @@ def submit_report_6():
     return redirect("/report-7")
 
 
-@app.route("/report-7", methods=["GET"])
+@ app.route("/report-7", methods=["GET"])
 def report_7():
     return render_template("report-7.html")
 
@@ -185,7 +237,7 @@ def submit_report_7():
     return redirect("/report-8")
 
 
-@app.route("/report-8", methods=["GET"])
+@ app.route("/report-8", methods=["GET"])
 def report_8():
     return render_template("report-8.html")
 
@@ -201,7 +253,7 @@ def submit_report_8():
     return redirect("/report-9")
 
 
-@app.route("/report-9", methods=["GET"])
+@ app.route("/report-9", methods=["GET"])
 def report_9():
     return render_template("report-9.html")
 

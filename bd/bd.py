@@ -127,17 +127,18 @@ def insert_report():
     global report
 
     # todo fix
-    group_email = "1@1"  # it should exists in groups table
+    group_email = "1@1"  # it should exist in the groups table
 
     cnx = mysql.connector.connect(**config)
     cursor = cnx.cursor()
 
     print(report)
 
+    # Insert into reports table
     query = (
         "INSERT INTO reports (activities_articulation, politics_articulation, "
         "selection_students, permanence_students, ufsc_target_public, "
-        "society_target_public, infrastructure_condition,"
+        "society_target_public, infrastructure_condition, "
         "infrastructure_description, tools_condition, tools_description, "
         "costing_condition, costing_description, year, group_email) "
         "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
@@ -165,6 +166,49 @@ def insert_report():
     cursor.execute(query, data)
     cnx.commit()
 
+    report_id = cursor.lastrowid
+
+    # Insert into scheduled_activities table
+    for activity in report['scheduled_activities']:
+        query = (
+            "INSERT INTO scheduled_activities (name, carrying_out,"
+            " total_hours, teaching_hours, research_hours, extension_hours,"
+            " report_id) VALUES (%s, %s, %s, %s, %s, %s, %s)"
+        )
+
+        data = (
+            activity['name'],
+            activity['carrying_out'],
+            activity['total_hours'],
+            activity['teaching_hours'],
+            activity['research_hours'],
+            activity['extension_hours'],
+            report_id
+        )
+
+        cursor.execute(query, data)
+
+    # Insert into unscheduled_activities table
+    for activity in report['unscheduled_activities']:
+        query = (
+            "INSERT INTO unscheduled_activities (name, justification,"
+            " total_hours, teaching_hours, research_hours, extension_hours,"
+            " report_id) VALUES (%s, %s, %s, %s, %s, %s, %s)"
+        )
+
+        data = (
+            activity['name'],
+            activity['justification'],
+            activity['total_hours'],
+            activity['teaching_hours'],
+            activity['research_hours'],
+            activity['extension_hours'],
+            report_id
+        )
+
+        cursor.execute(query, data)
+
+    cnx.commit()
     cursor.close()
     cnx.close()
 
