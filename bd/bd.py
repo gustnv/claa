@@ -1,5 +1,6 @@
 import mysql.connector
 import bcrypt
+from datetime import datetime
 
 config = {
     'user': 'root',
@@ -31,7 +32,8 @@ def login(email, password):
         return False
 
     stored_password = result[0]
-    if bcrypt.checkpw(password.encode('utf-8'), stored_password.encode('utf-8')):
+    if bcrypt.checkpw(password.encode('utf-8'),
+                      stored_password.encode('utf-8')):
         return True
     else:
         return False
@@ -59,14 +61,8 @@ def insert_tutor(name, status_claa, email, password):
     cursor = cnx.cursor()
 
     query = (
-        "insert into tutors (name, status_claa, email, password) values (%s, %s, %s, %s)")
-
-    if status_claa == "Não.":
-        status_claa = "no"
-    elif status_claa == "Sim, Titular.":
-        status_claa = "holder"
-    elif status_claa == "Sim, Suplente.":
-        status_claa = "substitute"
+        "insert into tutors (name, status_claa, email, password) values (%s,"
+        " %s, %s, %s)")
 
     hashed_password = hash_password(password)
 
@@ -95,7 +91,8 @@ def group_exists(email):
         return True
 
 
-def insert_group(name, email, insta, page, nof_scholarships, nof_volunteers, address, campus, center):
+def insert_group(name, email, insta, page, nof_scholarships, nof_volunteers,
+                 address, campus, center):
     # todo fix
     email_tutor = "1@1"  # it should exists in tutors table
 
@@ -103,9 +100,10 @@ def insert_group(name, email, insta, page, nof_scholarships, nof_volunteers, add
     cursor = cnx.cursor()
 
     query = (
-        "INSERT INTO claa.groups "
-        "(name, email, instagram, webpage, nof_scholarships, nof_volunteers, address, campus, center, email_tutor) "
-        "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+        "insert into claa.groups "
+        "(name, email, instagram, webpage, nof_scholarships, nof_volunteers,"
+        " address, campus, center, email_tutor) "
+        "values (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
     )
 
     data = (name, email, insta, page, nof_scholarships,
@@ -118,9 +116,56 @@ def insert_group(name, email, insta, page, nof_scholarships, nof_volunteers, add
     cnx.close()
 
 
-def set_user():
-    pass
+report = {}
 
 
-def get_group_pet():
-    pass
+def update_report(**kwargs):
+    report[[*kwargs.keys()][0]] = [*kwargs.values()][0]
+
+
+def insert_report():
+    global report
+
+    # todo fix
+    group_email = "1@1"  # it should exists in groups table
+
+    cnx = mysql.connector.connect(**config)
+    cursor = cnx.cursor()
+
+    print(report)
+
+    query = (
+        "INSERT INTO reports (activities_articulation, politics_articulation, "
+        "selection_students, permanence_students, ufsc_target_public, "
+        "society_target_public, infrastructure_condition,"
+        "infrastructure_description, tools_condition, tools_description, "
+        "costing_condition, costing_description, year, group_email) "
+        "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+    )
+
+    year = datetime.now().year
+
+    data = (
+        report['activities_articulation'],
+        report['politics_articulation'],
+        report['selection_students'],
+        report['permanence_students'],
+        report['ufsc_target_public'],
+        report['society_target_public'],
+        report['infrastructure_condition'],
+        report['infrastructure_description'],
+        report['tools_condition'],
+        report['tools_description'],
+        report['costing_condition'],
+        report['costing_description'],
+        year,
+        group_email
+    )
+
+    cursor.execute(query, data)
+    cnx.commit()
+
+    cursor.close()
+    cnx.close()
+
+    report = {}

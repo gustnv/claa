@@ -14,25 +14,25 @@
 
   <div class="w-full max-w-2xl p-8 bg-white rounded-lg shadow-md">
     <h2 class="mb-6 text-xl font-semibold text-gray-700">Considerações sobre as condições de trabalho dos grupos</h2>
-    <form action="panel.html">
+    <form action="/submit-report-9" method="post">
       <div>
         <div class="mb-8">
           <label class="block mb-2 text-sm font-medium text-gray-600">Em relação ao custeio, seu grupo recebeu o recurso no ano:</label>
 
           <div class="flex items-center mb-2">
-            <input type="radio" id="sim" name="recurso" value="sim" class="mr-2" required>
+            <input type="radio" id="sim" name="costing-condition" value="yes" class="mr-2" required>
             <label for="sim" class="text-gray-600">Sim.</label>
           </div>
 
           <div class="flex items-center mb-2">
-            <input type="radio" id="nao" name="recurso" value="nao" class="mr-2" required>
+            <input type="radio" id="nao" name="costing-condition" value="no" class="mr-2" required>
             <label for="nao" class="text-gray-600">Não.</label>
           </div>
         </div>
 
         <div class="mb-10">
           <label class="block mb-2 text-sm font-medium text-gray-600">Descreva em até 500 caracteres comente as principais questões relacionadas ao custeio.</label>
-          <textarea style="resize:none" class="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:ring focus:border-blue-300" maxlength="500" rows="4" required></textarea>
+          <textarea name="costing-description" style="resize:none" class="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:ring focus:border-blue-300" maxlength="500" rows="4" required></textarea>
         </div>
       </div>
 

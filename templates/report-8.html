@@ -14,30 +14,30 @@
 
   <div class="w-full max-w-2xl p-8 bg-white rounded-lg shadow-md">
     <h2 class="mb-6 text-xl font-semibold text-gray-700">Considerações sobre as condições de trabalho dos grupos</h2>
-    <form action="report-9.html">
+    <form action="/submit-report-8" method="post">
       <div>
         <div class="mb-8">
           <label class="block mb-2 text-sm font-medium text-gray-600">As condições de trabalho de seu grupo, no ano de trabalho, em relação a equipamentos:</label>
 
           <div class="flex items-center mb-2">
-            <input type="radio" id="melhoram" name="condicoes-trabalho" value="melhoram" class="mr-2" required>
+            <input type="radio" id="melhoram" name="tools-condition" value="better" class="mr-2" required>
             <label for="melhoram" class="text-gray-600">Melhoram.</label>
           </div>
 
           <div class="flex items-center mb-2">
-            <input type="radio" id="mantiveram-se" name="condicoes-trabalho" value="mantiveram-se" class="mr-2" required>
+            <input type="radio" id="mantiveram-se" name="tools-condition" value="equal" class="mr-2" required>
             <label for="mantiveram-se" class="text-gray-600">Mantiveram-se.</label>
           </div>
 
           <div class="flex items-center mb-2">
-            <input type="radio" id="pioraram" name="condicoes-trabalho" value="pioraram" class="mr-2" required>
+            <input type="radio" id="pioraram" name="tools-condition" value="worse" class="mr-2" required>
             <label for="pioraram" class="text-gray-600">Pioraram.</label>
           </div>
         </div>
 
         <div class="mb-10">
           <label class="block mb-2 text-sm font-medium text-gray-600">Descreva em até 500 caracteres as principais questões relacionadas aos equipamentos do seu grupo.</label>
-          <textarea style="resize:none" class="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:ring focus:border-blue-300" maxlength="500" rows="4" required></textarea>
+          <textarea name="tools-description" style="resize:none" class="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:ring focus:border-blue-300" maxlength="500" rows="4" required></textarea>
         </div>
       </div>
 

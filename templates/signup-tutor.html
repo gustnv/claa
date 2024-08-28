@@ -12,7 +12,7 @@
   <div class="w-full max-w-sm p-8 bg-white rounded-lg shadow-md">
     <h2 class="mb-6 text-2xl font-semibold text-gray-700">Cadastro</h2>
 
-    <form action="/signup-tutor" id="forms" method="post">
+    <form action="/submit-signup-tutor" id="forms" method="post">
       <div class="mb-4">
         <label class="block mb-2 text-sm font-medium text-gray-600" for="email">Insira seu nome</label>
         <input name="name" class="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:ring focus:border-blue-300" type="name" id="name" name="name" value="" required>
@@ -22,9 +22,9 @@
         <label class="block mb-2 text-sm font-medium text-gray-600" for="tutor-status">Status CLAA</label>
         <select name="status-claa" class="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:ring focus:border-blue-300" id="tutor-status" required>
           <option value="" disabled selected>É membro do CLAA?</option>
-          <option>Não.</option>
-          <option>Sim, Titular.</option>
-          <option>Sim, Suplente.</option>
+          <option value="no">Não.</option>
+          <option value="holder">Sim, Titular.</option>
+          <option value="substitute">Sim, Suplente.</option>
         </select>
       </div>
 
@@ -50,10 +50,6 @@
         </div>
       </div>
 
-      <div class="mb-4" id="login-button">
-        <button class="w-full px-4 py-2 text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none focus:bg-blue-700" type="submit">Cadastrar</button>
-      </div>
-
       {% set message = get_flashed_messages() %}
       {% if message %}
         <div class="mb-4 p-4 text-sm text-red-800 bg-red-100 border border-red-300 rounded-lg">
@@ -61,6 +57,9 @@
         </div>
       {% endif %}
 
+      <div class="mb-4" id="login-button">
+        <button class="w-full px-4 py-2 text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none focus:bg-blue-700" type="submit">Cadastrar</button>
+      </div>
     </form>
   </div>
   <script>
