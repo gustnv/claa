@@ -4,10 +4,6 @@ from bd import bd
 
 app = Flask(__name__)
 
-# toda pagina em flask tem:
-# route: caminho do site | / caminho default
-# função: o que quer exibir na página
-
 app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY", "default_key")
 config = {
     'user': os.environ.get('DB_USER', 'root'),
@@ -36,7 +32,6 @@ def submit_login():
     user = bd.login(email, password)
 
     if user:
-        session['name_user'] = user['name']
         session['email_user'] = user['email']
 
         if bd.claa_member(email):
@@ -51,20 +46,20 @@ def submit_login():
 @app.route('/logout')
 def logout():
     session.pop('email_user', None)
-    session.pop('name_user', None)
     return redirect('/login')
 
 
 @app.route("/panel-tutor", methods=["GET"])
 def panel_tutor():
     if 'email_user' in session:
-        name_tutor = session['name_user']
+        bd.reset_session()
 
-        report_exists = bd.report_exists(session['email_user'])
+        email_group = bd.get_email_group_by_tutor(session['email_user'])
+        report_exists = bd.report_exists(email_group)
 
         tutor_has_group = bd.get_group_by_email_tutor(session['email_user'])
 
-        return render_template('panel-tutor.html', name_tutor=name_tutor,
+        return render_template('panel-tutor.html', name_tutor=bd.get_name_user_by_email(session['email_user']),
                                tutor_has_group=tutor_has_group,
                                report_exists=report_exists)
     else:
@@ -74,19 +69,17 @@ def panel_tutor():
 @app.route("/panel-claa", methods=["GET"])
 def panel_claa():
     if 'email_user' in session:
-        name_claa = session['name_user']
-
-        return render_template('panel-claa.html', name_claa=name_claa)
+        return render_template('panel-claa.html', name_claa=bd.get_name_user_by_email(session['email_user']))
     else:
         return redirect('/login')
 
 
-@app.route("/signup-tutor", methods=["GET"])
+@ app.route("/signup-tutor", methods=["GET"])
 def signup_tutor():
     return render_template("signup-tutor.html")
 
 
-@app.route("/submit-signup-tutor", methods=["POST"])
+@ app.route("/submit-signup-tutor", methods=["POST"])
 def submit_signup_tutor():
     name = request.form.get("name")
     status_claa = request.form.get("status-claa")
@@ -101,7 +94,7 @@ def submit_signup_tutor():
         return redirect("/login")
 
 
-@app.route("/signup-group", methods=["GET"])
+@ app.route("/signup-group", methods=["GET"])
 def signup_group():
     form_data = session.get('signup_group_data', {})
 
@@ -110,7 +103,7 @@ def signup_group():
     return render_template("signup-group.html", form_data=form_data)
 
 
-@app.route("/submit-signup-group", methods=["POST", "GET"])
+@ app.route("/submit-signup-group", methods=["POST", "GET"])
 def submit_signup_group():
     # Retrieve form data
     form_data = {
@@ -130,7 +123,6 @@ def submit_signup_group():
     email_tutor = session.get("email_user")
     if not email_tutor:
         # Store form data in session
-        flash("Unable to identify the tutor. Please log in again.")
         return redirect("/login")
 
     if bd.get_group_by_email_tutor(email_tutor):
@@ -146,22 +138,20 @@ def submit_signup_group():
             return redirect("/panel-tutor")
 
 
-@app.route("/add-group", methods=["GET"])
+@ app.route("/add-group", methods=["GET"])
 def add_group():
     return redirect("/signup-group")
 
 
-@app.route("/edit-group", methods=["GET"])
+@ app.route("/edit-group", methods=["GET"])
 def edit_group():
     # Retrieve the email of the tutor from the session
     email_tutor = session.get("email_user")
     if not email_tutor:
-        flash("Unable to identify the tutor. Please log in again.")
         return redirect("/login")
 
     # Fetch group data from the database where email_tutor matches
     group_data = bd.get_group_by_email_tutor(email_tutor)
-    print(group_data)
 
     if group_data:
         # Store fetched group data in session
@@ -180,19 +170,46 @@ def edit_group():
     return redirect("/signup-group")
 
 
-@app.route("/add-report", methods=["GET"])
+@ app.route("/add-report", methods=["GET"])
 def add_report():
+    email_tutor = session.get("email_user")
+    if not email_tutor:
+        return redirect("/login")
+
     return redirect("/report-0")
 
 
-@app.route("/edit-report", methods=["GET"])
+@ app.route("/edit-report", methods=["GET"])
 def edit_report():
+    email_tutor = session.get("email_user")
+    if not email_tutor:
+        return redirect("/login")
+
+    # Fetch existing report data if available
+    report_data = bd.get_report_by_email_group(
+        bd.get_email_group_by_tutor(email_tutor))
+
+    if report_data:
+        session['activities_articulation'] = report_data[1]
+        session['politics_articulation'] = report_data[2]
+        session['selection_students'] = report_data[3]
+        session['permanence_students'] = report_data[4]
+        session['ufsc_target_public'] = report_data[5]
+        session['society_target_public'] = report_data[6]
+        session['infrastructure_condition'] = report_data[7]
+        session['infrastructure_description'] = report_data[8]
+        session['tools_condition'] = report_data[9]
+        session['tools_description'] = report_data[10]
+        session['costing_condition'] = report_data[11]
+        session['costing_description'] = report_data[12]
+        session['scheduled_activities'] = []  # todo
+        session['unscheduled_activities'] = []  # todo
+
     return redirect("/report-0")
 
 
 @ app.route("/report-0", methods=["GET"])
 def report_0():
-    bd.reset_report_session()
     return render_template("report-0.html")
 
 
@@ -221,15 +238,16 @@ def submit_report_0():
             activities.append(activity)
 
     session['scheduled_activities'] = activities
+
     return redirect("/report-1")
 
 
-@app.route("/report-1", methods=["GET"])
+@ app.route("/report-1", methods=["GET"])
 def report_1():
     return render_template("report-1.html")
 
 
-@app.route("/submit-report-1", methods=["POST"])
+@ app.route("/submit-report-1", methods=["POST"])
 def submit_report_1():
     activities = []
 
@@ -254,109 +272,141 @@ def submit_report_1():
             activities.append(activity)
 
     session['unscheduled_activities'] = activities
+
     return redirect("/report-2")
 
 
-@app.route("/report-2", methods=["GET"])
+@ app.route("/report-2", methods=["GET"])
 def report_2():
-    return render_template("report-2.html")
+    return render_template("report-2.html", activities_articulation=session.get('activities_articulation', ''))
 
 
-@app.route("/submit-report-2", methods=["POST"])
+@ app.route("/submit-report-2", methods=["POST"])
 def submit_report_2():
     session['activities_articulation'] = request.form.get(
         "activities-articulation")
+
     return redirect("/report-3")
 
 
-@app.route("/report-3", methods=["GET"])
+@ app.route("/report-3", methods=["GET"])
 def report_3():
-    return render_template("report-3.html")
+    return render_template("report-3.html", politics_articulation=session.get('politics_articulation', ''))
 
 
-@app.route("/submit-report-3", methods=["POST"])
+@ app.route("/submit-report-3", methods=["POST"])
 def submit_report_3():
     session['politics_articulation'] = request.form.get(
         "politics-articulation")
+
     return redirect("/report-4")
 
 
-@app.route("/report-4", methods=["GET"])
+@ app.route("/report-4", methods=["GET"])
 def report_4():
-    return render_template("report-4.html")
+    return render_template("report-4.html", selection_students=session.get('selection_students', ''))
 
 
-@app.route("/submit-report-4", methods=["POST"])
+@ app.route("/submit-report-4", methods=["POST"])
 def submit_report_4():
     session['selection_students'] = request.form.get("selection-students")
+
     return redirect("/report-5")
 
 
-@app.route("/report-5", methods=["GET"])
+@ app.route("/report-5", methods=["GET"])
 def report_5():
-    return render_template("report-5.html")
+    return render_template("report-5.html", permanence_students=session.get('permanence_students', ''))
 
 
-@app.route("/submit-report-5", methods=["POST"])
+@ app.route("/submit-report-5", methods=["POST"])
 def submit_report_5():
     session['permanence_students'] = request.form.get("permanence-students")
+
     return redirect("/report-6")
 
 
-@app.route("/report-6", methods=["GET"])
+@ app.route("/report-6", methods=["GET"])
 def report_6():
-    return render_template("report-6.html")
+    return render_template("report-6.html",
+                           ufsc_target_public=session.get(
+                               'ufsc_target_public', ''),
+                           society_target_public=session.get(
+                               'society_target_public', '')
+                           )
 
 
-@app.route("/submit-report-6", methods=["POST"])
+@ app.route("/submit-report-6", methods=["POST"])
 def submit_report_6():
     session['ufsc_target_public'] = request.form.get("ufsc-target-public")
     session['society_target_public'] = request.form.get(
         "society-target-public")
+
     return redirect("/report-7")
 
 
-@app.route("/report-7", methods=["GET"])
+@ app.route("/report-7", methods=["GET"])
 def report_7():
-    return render_template("report-7.html")
+    return render_template("report-7.html",
+                           infrastructure_condition=session.get(
+                               'infrastructure_condition', ''),
+                           infrastructure_description=session.get(
+                               'infrastructure_description', '')
+                           )
 
 
-@app.route("/submit-report-7", methods=["POST"])
+@ app.route("/submit-report-7", methods=["POST"])
 def submit_report_7():
     session['infrastructure_condition'] = request.form.get(
         "infrastructure-condition")
     session['infrastructure_description'] = request.form.get(
         "infrastructure-description")
+
     return redirect("/report-8")
 
 
-@app.route("/report-8", methods=["GET"])
+@ app.route("/report-8", methods=["GET"])
 def report_8():
-    return render_template("report-8.html")
+    return render_template("report-8.html",
+                           tools_condition=session.get('tools_condition', ''),
+                           tools_description=session.get(
+                               'tools_description', '')
+                           )
 
 
-@app.route("/submit-report-8", methods=["POST"])
+@ app.route("/submit-report-8", methods=["POST"])
 def submit_report_8():
     session['tools_condition'] = request.form.get("tools-condition")
     session['tools_description'] = request.form.get("tools-description")
+
     return redirect("/report-9")
 
 
-@app.route("/report-9", methods=["GET"])
+@ app.route("/report-9", methods=["GET"])
 def report_9():
-    return render_template("report-9.html")
+    return render_template("report-9.html",
+                           costing_condition=session.get(
+                               'costing_condition', ''),
+                           costing_description=session.get(
+                               'costing_description', '')
+                           )
 
 
-@app.route("/submit-report-9", methods=["POST"])
+@ app.route("/submit-report-9", methods=["POST"])
 def submit_report_9():
     session['costing_condition'] = request.form.get("costing-condition")
     session['costing_description'] = request.form.get("costing-description")
+
     return redirect("/submit-report")
 
 
-@app.route("/submit-report", methods=["GET"])
+@ app.route("/submit-report", methods=["GET"])
 def submit_report():
-    bd.insert_report()
+    email_group = bd.get_email_group_by_tutor(session['email_user'])
+    if bd.report_exists(email_group):
+        bd.update_report(email_group)
+    else:
+        bd.insert_report(email_group)
 
     return redirect("/panel-tutor")
 
