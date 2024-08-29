@@ -30,9 +30,13 @@ def submit_login():
     user = bd.login(email, password)
 
     if user:
-        session['name_tutor'] = user['name']
-        session['email_tutor'] = user['email']
-        return redirect("/panel-tutor")
+        session['name_user'] = user['name']
+        session['email_user'] = user['email']
+
+        if bd.claa_member(email):
+            return redirect("/panel-claa")
+        else:
+            return redirect("/panel-tutor")
     else:
         flash("Uncessuful login - user not registered or incorrect password")
         return redirect("/login")
@@ -40,23 +44,33 @@ def submit_login():
 
 @app.route('/logout')
 def logout():
-    session.pop('email_tutor', None)
-    session.pop('name_tutor', None)
+    session.pop('email_user', None)
+    session.pop('name_user', None)
     return redirect('/login')
 
 
 @app.route("/panel-tutor", methods=["GET"])
 def panel_tutor():
-    if 'email_tutor' in session:
-        name_tutor = session['name_tutor']
+    if 'email_user' in session:
+        name_tutor = session['name_user']
 
-        report_exists = bd.report_exists(session['email_tutor'])
+        report_exists = bd.report_exists(session['email_user'])
 
-        tutor_has_group = bd.group_exists(session['email_tutor'])
+        tutor_has_group = bd.group_exists(session['email_user'])
 
         return render_template('panel-tutor.html', name_tutor=name_tutor,
                                tutor_has_group=tutor_has_group,
                                report_exists=report_exists)
+    else:
+        return redirect('/login')
+
+
+@app.route("/panel-claa", methods=["GET"])
+def panel_claa():
+    if 'email_user' in session:
+        name_claa = session['name_user']
+
+        return render_template('panel-claa.html', name_claa=name_claa)
     else:
         return redirect('/login')
 

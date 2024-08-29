@@ -79,7 +79,7 @@ CREATE TABLE `groups` (
   `email_tutor` varchar(100) NOT NULL,
   PRIMARY KEY (`email`),
   KEY `email_tutor` (`email_tutor`),
-  CONSTRAINT `groups_ibfk_1` FOREIGN KEY (`email_tutor`) REFERENCES `tutors` (`email`)
+  CONSTRAINT `groups_ibfk_1` FOREIGN KEY (`email_tutor`) REFERENCES `users` (`email`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -113,13 +113,13 @@ CREATE TABLE `reports` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Table structure for table `tutors`
+-- Table structure for table `users`
 --
 
-DROP TABLE IF EXISTS `tutors`;
+DROP TABLE IF EXISTS `users`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `tutors` (
+CREATE TABLE `users` (
   `email` varchar(100) NOT NULL,
   `password` varchar(60) NOT NULL,
   `name` varchar(100) NOT NULL,
@@ -137,19 +137,19 @@ LOCK TABLES
   `scheduled_activities` WRITE, 
   `groups` WRITE, 
   `reports` WRITE, 
-  `tutors` WRITE;
+  `users` WRITE;
 
 /*!40000 ALTER TABLE `unscheduled_activities` DISABLE KEYS */;
 /*!40000 ALTER TABLE `scheduled_activities` DISABLE KEYS */;
 /*!40000 ALTER TABLE `groups` DISABLE KEYS */;
 /*!40000 ALTER TABLE `reports` DISABLE KEYS */;
-/*!40000 ALTER TABLE `tutors` DISABLE KEYS */;
+/*!40000 ALTER TABLE `users` DISABLE KEYS */;
 
 /*!40000 ALTER TABLE `unscheduled_activities` ENABLE KEYS */;
 /*!40000 ALTER TABLE `scheduled_activities` ENABLE KEYS */;
 /*!40000 ALTER TABLE `groups` ENABLE KEYS */;
 /*!40000 ALTER TABLE `reports` ENABLE KEYS */;
-/*!40000 ALTER TABLE `tutors` ENABLE KEYS */;
+/*!40000 ALTER TABLE `users` ENABLE KEYS */;
 
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;

@@ -23,7 +23,7 @@ def login(email, password):
     # Use dictionary cursor for easier access
     cursor = cnx.cursor(dictionary=True)
 
-    query = "SELECT name, email, password FROM tutors WHERE email = %s"
+    query = "SELECT name, email, password FROM users WHERE email = %s"
     cursor.execute(query, (email, ))
 
     result = cursor.fetchone()
@@ -46,11 +46,33 @@ def login(email, password):
         return False
 
 
+def claa_member(email):
+    """Checks if a tutor is a member of the 'holder' or 'substitute' status_claa."""
+    if not tutor_exists(email):
+        return False
+
+    cnx = mysql.connector.connect(**config)
+    cursor = cnx.cursor()
+
+    query = "SELECT status_claa FROM users WHERE email = %s"
+    cursor.execute(query, (email,))
+    status_claa = cursor.fetchone()
+
+    cursor.close()
+    cnx.close()
+
+    # Check if the tutor's status is 'holder' or 'substitute'
+    if status_claa and status_claa[0] in ('holder', 'substitute'):
+        return True
+    else:
+        return False
+
+
 def tutor_exists(email):
     cnx = mysql.connector.connect(**config)
     cursor = cnx.cursor()
 
-    query = ("select 1 from tutors where email = %s")
+    query = ("select 1 from users where email = %s")
     cursor.execute(query, (email, ))
     tutor_exists = cursor.fetchone()
 
@@ -68,7 +90,7 @@ def insert_tutor(name, status_claa, email, password):
     cursor = cnx.cursor()
 
     query = (
-        "insert into tutors (name, status_claa, email, password) values (%s,"
+        "insert into users (name, status_claa, email, password) values (%s,"
         " %s, %s, %s)")
 
     hashed_password = hash_password(password)
@@ -135,7 +157,7 @@ def group_exists(email):
 def insert_group(name, email, insta, page, nof_scholarships, nof_volunteers,
                  address, campus, center):
     # todo fix
-    email_tutor = "1@1"  # it should exists in tutors table
+    email_tutor = "1@1"  # it should exists in users table
 
     cnx = mysql.connector.connect(**config)
     cursor = cnx.cursor()
