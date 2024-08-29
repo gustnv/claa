@@ -1,7 +1,6 @@
 from flask import Flask, session, flash, render_template, redirect, request
-
+import os
 from bd import bd
-
 
 app = Flask(__name__)
 
@@ -9,7 +8,14 @@ app = Flask(__name__)
 # route: caminho do site | / caminho default
 # função: o que quer exibir na página
 
-app.config["SECRET_KEY"] = "CLAA"  # replace with a security key
+app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY", "default_key")
+config = {
+    'user': os.environ.get('DB_USER', 'root'),
+    'password': os.environ.get('DB_PASSWORD', 'P4ssw0rd!'),
+    'host': '127.0.0.1',
+    'database': 'claa',
+    'raise_on_warnings': True
+}
 
 
 @app.route("/")
