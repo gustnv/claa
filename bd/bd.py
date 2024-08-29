@@ -137,6 +137,21 @@ def tutor_has_group(email):
         return True
 
 
+def get_group_by_email_tutor(email_tutor):
+    cnx = mysql.connector.connect(**config)
+    cursor = cnx.cursor()
+
+    query = "SELECT * FROM claa.groups WHERE email_tutor = %s"
+    cursor.execute(query, (email_tutor,))
+
+    result = cursor.fetchone()
+
+    cursor.close()
+    cnx.close()
+
+    return result
+
+
 def group_exists(email):
     cnx = mysql.connector.connect(**config)
     cursor = cnx.cursor()
@@ -154,23 +169,53 @@ def group_exists(email):
         return True
 
 
-def insert_group(name, email, insta, page, nof_scholarships, nof_volunteers,
-                 address, campus, center):
-    # todo fix
-    email_tutor = "1@1"  # it should exists in users table
+def update_group(form_data, email_tutor):
+    cnx = mysql.connector.connect(**config)
+    cursor = cnx.cursor()
 
+    # SQL query to update the group data
+    query = """
+    UPDATE claa.groups 
+    SET name = %s, instagram = %s, webpage = %s, nof_scholarships = %s,
+        nof_volunteers = %s, address = %s, campus = %s, center = %s
+    WHERE email_tutor = %s
+    """
+
+    # Execute the query with the provided form data
+    cursor.execute(query, (
+        form_data['name'],
+        form_data['insta'],
+        form_data['page'],
+        form_data['nof_scholarships'],
+        form_data['nof_volunteers'],
+        form_data['address'],
+        form_data['campus'],
+        form_data['center'],
+        email_tutor
+    ))
+    cnx.commit()
+
+    cursor.close()
+    cnx.close()
+
+
+def insert_group(form_data, email_tutor):
     cnx = mysql.connector.connect(**config)
     cursor = cnx.cursor()
 
     query = (
-        "insert into claa.groups "
-        "(name, email, instagram, webpage, nof_scholarships, nof_volunteers,"
-        " address, campus, center, email_tutor) "
-        "values (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+        "INSERT INTO claa.groups "
+        "(name, email, instagram, webpage, nof_scholarships, nof_volunteers, "
+        "address, campus, center, email_tutor) "
+        "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
     )
 
-    data = (name, email, insta, page, nof_scholarships,
-            nof_volunteers, address, campus, center, email_tutor)
+    # Prepare the data tuple using form_data dictionary and email_tutor
+    data = (
+        form_data['name'], form_data['email'], form_data['insta'],
+        form_data['page'], form_data['nof_scholarships'], form_data['nof_volunteers'],
+        form_data['address'], form_data['campus'], form_data['center'], email_tutor
+    )
 
     cursor.execute(query, data)
     cnx.commit()

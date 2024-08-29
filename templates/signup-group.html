@@ -16,67 +16,68 @@
 
     <form action="/submit-signup-group" method="post">
       <div class="mb-4">
-        <label class="block mb-2 text-sm font-medium text-gray-600" for="group-email">Email do grupo</label>
-        <input name="email" class="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:ring focus:border-blue-300" type="email" id="group-email" value="" required>
+        <label class="block mb-2 text-sm font-medium text-gray-600" for="group-email">email do grupo</label>
+        <input name="email" class="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:ring focus:border-blue-300" type="email" id="group-email" value="{{ form_data.get('email', '') }}" required>
       </div>
 
       {% set message = get_flashed_messages() %}
       {% if message %}
         <div class="mb-4 p-4 text-sm text-red-800 bg-red-100 border border-red-300 rounded-lg">
-          O email já está cadastrado.
+          o email já está cadastrado.
         </div>
       {% endif %}
-        
+
       <div class="mb-4">
-        <label class="block mb-2 text-sm font-medium text-gray-600" for="group-name">Nome do grupo</label>
-        <input name="name" class="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:ring focus:border-blue-300" type="text" id="group-name" value="" required>
+        <label class="block mb-2 text-sm font-medium text-gray-600" for="group-name">nome do grupo</label>
+        <input name="name" class="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:ring focus:border-blue-300" type="text" id="group-name" value="{{ form_data.get('name', '') }}" required>
       </div>
 
       <div class="mb-4">
-        <label class="block mb-2 text-sm font-medium text-gray-600" for="group-instagram">Instagram do grupo</label>
-        <input name="insta" class="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:ring focus:border-blue-300" type="text" id="group-instagram" value="" required>
+        <label class="block mb-2 text-sm font-medium text-gray-600" for="group-instagram">instagram do grupo</label>
+        <input name="insta" class="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:ring focus:border-blue-300" type="text" id="group-instagram" value="{{ form_data.get('insta', '') }}" required>
       </div>
 
       <div class="mb-4">
-        <label class="block mb-2 text-sm font-medium text-gray-600" for="group-page">Página do grupo</label>
-        <input name="page" class="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:ring focus:border-blue-300" type="text" id="group-page" value="" required>
+        <label class="block mb-2 text-sm font-medium text-gray-600" for="group-page">página do grupo</label>
+        <input name="page" class="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:ring focus:border-blue-300" type="text" id="group-page" value="{{ form_data.get('page', '') }}" required>
       </div>
 
       <div class="mb-4">
-        <label class="block mb-2 text-sm font-medium text-gray-600" for="group-scholarship-number">Número de bolsistas</label>
-        <input name="nof-scholarships" class="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:ring focus:border-blue-300" type="number" id="group-scholarship-number" value="" min="0" required>
+        <label class="block mb-2 text-sm font-medium text-gray-600" for="group-scholarship-number">número de bolsistas</label>
+        <input name="nof-scholarships" class="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:ring focus:border-blue-300" type="number" id="group-scholarship-number" value="{{ form_data.get('nof_scholarships', '') }}" min="0" required>
       </div>
 
       <div class="mb-8">
-        <label class="block mb-2 text-sm font-medium text-gray-600" for="group-volunteer-number">Número de voluntários</label>
-        <input name="nof-volunteers" class="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:ring focus:border-blue-300" type="number" id="group-volunteer-number" value="" min="0" required>
+        <label class="block mb-2 text-sm font-medium text-gray-600" for="group-volunteer-number">número de voluntários</label>
+        <input name="nof-volunteers" class="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:ring focus:border-blue-300" type="number" id="group-volunteer-number" value="{{ form_data.get('nof_volunteers', '') }}" min="0" required>
       </div>
 
-      <h3 class="mb-4 text-lg font-medium text-gray-700">Endereço</h3>
-
-      <div class="mb-4">
-        <label class="block mb-2 text-sm font-medium text-gray-600" for="group-room">Sala/bloco</label>
-        <input name="address" class="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:ring focus:border-blue-300" type="text" id="group-room" value="" required>
-      </div>
+      <h3 class="mb-4 text-lg font-medium text-gray-700">endereço</h3>
 
       <div class="mb-4">
-        <label class="block mb-2 text-sm font-medium text-gray-600" for="group-campus">Campus</label>
-        <select name="campus" class="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:ring focus:border-blue-300" id="group-campus" required>
-          <option value="" disabled selected>Selecione um campus</option>
-        </select>
+        <label class="block mb-2 text-sm font-medium text-gray-600" for="group-room">sala/bloco</label>
+        <input name="address" class="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:ring focus:border-blue-300" type="text" id="group-room" value="{{ form_data.get('address', '') }}" required>
       </div>
 
-      <div class="mb-12">
-        <label class="block mb-2 text-sm font-medium text-gray-600" for="group-center">Centro vinculado</label>
-        <select name="center" class="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:ring focus:border-blue-300" id="group-center" required>
-          <option value="" disabled selected>Selecione um centro</option>
-        </select>
-      </div>
+        <div class="mb-4">
+          <label class="block mb-2 text-sm font-medium text-gray-600" for="group-campus">campus</label>
+          <select name="campus" class="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:ring focus:border-blue-300" id="group-campus" required>
+            <option value="" disabled {% if not form_data.get('campus') %}selected{% endif %}>selecione um campus</option>
+            <!-- Campus options will be populated by JavaScript -->
+          </select>
+        </div>
+
+        <div class="mb-12">
+          <label class="block mb-2 text-sm font-medium text-gray-600" for="group-center">centro vinculado</label>
+          <select name="center" class="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:ring focus:border-blue-300" id="group-center" required>
+            <option value="" disabled {% if not form_data.get('center') %}selected{% endif %}>selecione um centro</option>
+            <!-- Center options will be populated based on the selected campus -->
+          </select>
+        </div>
 
       <div>
-        <button class="w-full px-4 py-2 text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none focus:bg-blue-700" type="submit">Registrar</button>
+        <button class="w-full px-4 py-2 text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none focus:bg-blue-700" type="submit">registrar</button>
       </div>
-
     </form>
   </div>
   <script>
@@ -108,11 +109,11 @@
     }
 
     const Addresses = [
-      { campus: "Araranguá", centros: ["CTS"] },
-      { campus: "Blumenau", centros: ["CTE"] },
-      { campus: "Curitibanos", centros: ["CCR"] },
-      { campus: "Florianópolis", centros: ["CCA", "CCB", "CCE", "CCS", "CCJ", "CDS", "CED", "CFH", "CFM", "CSE", "CTC", "PROGRAD"] },
-      { campus: "Joinville", centros: ["CTJ"] }
+      new Address("Araranguá", ["CTS"]),
+      new Address("Blumenau", ["CTE"]),
+      new Address("Curitibanos", ["CCR"]),
+      new Address("Florianópolis", ["CCA", "CCB", "CCE", "CCS", "CCJ", "CDS", "CED", "CFH", "CFM", "CSE", "CTC", "PROGRAD"]),
+      new Address("Joinville", ["CTJ"])
     ];
 
     const campusSelect = document.getElementById('group-campus');
@@ -123,6 +124,7 @@
       const option = document.createElement('option');
       option.value = address.campus;
       option.textContent = address.campus;
+      option.selected = "{{ form_data.get('campus') }}" === address.campus; // Select the previously selected campus
       campusSelect.appendChild(option);
     });
 
@@ -132,17 +134,23 @@
       const selectedAddress = Addresses.find(address => address.campus === selectedCampus);
 
       // Clear existing options
-      centerSelect.innerHTML = '<option value="" disabled selected>Selecione um centro</option>';
+      centerSelect.innerHTML = '<option value="" disabled selected>selecione um centro</option>';
 
       if (selectedAddress) {
         selectedAddress.centros.forEach(centro => {
           const option = document.createElement('option');
           option.value = centro;
           option.textContent = centro;
+          option.selected = "{{ form_data.get('center') }}" === centro; // Select the previously selected center
           centerSelect.appendChild(option);
         });
       }
-    });   
+    });
+
+    // Trigger change event to pre-select the center if a campus was already selected
+    if (campusSelect.value) {
+      campusSelect.dispatchEvent(new Event('change'));
+    }
   </script>
 </body>
 </html>

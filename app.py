@@ -56,7 +56,7 @@ def panel_tutor():
 
         report_exists = bd.report_exists(session['email_user'])
 
-        tutor_has_group = bd.group_exists(session['email_user'])
+        tutor_has_group = bd.get_group_by_email_tutor(session['email_user'])
 
         return render_template('panel-tutor.html', name_tutor=name_tutor,
                                tutor_has_group=tutor_has_group,
@@ -75,12 +75,12 @@ def panel_claa():
         return redirect('/login')
 
 
-@ app.route("/signup-tutor", methods=["GET"])
+@app.route("/signup-tutor", methods=["GET"])
 def signup_tutor():
     return render_template("signup-tutor.html")
 
 
-@ app.route("/submit-signup-tutor", methods=["POST"])
+@app.route("/submit-signup-tutor", methods=["POST"])
 def submit_signup_tutor():
     name = request.form.get("name")
     status_claa = request.form.get("status-claa")
@@ -95,30 +95,49 @@ def submit_signup_tutor():
         return redirect("/login")
 
 
-@ app.route("/signup-group", methods=["GET"])
+@app.route("/signup-group", methods=["GET"])
 def signup_group():
-    return render_template("signup-group.html")
+    form_data = session.get('signup_group_data', {})
+
+    session.pop('signup_group_data', None)
+
+    return render_template("signup-group.html", form_data=form_data)
 
 
-@ app.route("/submit-signup-group", methods=["POST"])
+@app.route("/submit-signup-group", methods=["POST", "GET"])
 def submit_signup_group():
-    name = request.form.get("name")
-    email = request.form.get("email")
-    insta = request.form.get("insta")
-    page = request.form.get("page")
-    nof_scholarships = request.form.get("nof-scholarships")
-    nof_volunteers = request.form.get("nof-volunteers")
-    address = request.form.get("address")
-    campus = request.form.get("campus")
-    center = request.form.get("center")
+    # Retrieve form data
+    form_data = {
+        "name": request.form.get("name"),
+        "email": request.form.get("email"),
+        "insta": request.form.get("insta"),
+        "page": request.form.get("page"),
+        "nof_scholarships": request.form.get("nof-scholarships"),
+        "nof_volunteers": request.form.get("nof-volunteers"),
+        "address": request.form.get("address"),
+        "campus": request.form.get("campus"),
+        "center": request.form.get("center"),
+    }
+    session['signup_group_data'] = form_data
 
-    if bd.group_exists(email):
-        flash("Uncessuful registration - email already exists")
-        return redirect("/signup-group")
-    else:
-        bd.insert_group(name, email, insta, page, nof_scholarships,
-                        nof_volunteers, address, campus, center)
+    # Check for tutor email in session
+    email_tutor = session.get("email_user")
+    if not email_tutor:
+        # Store form data in session
+        flash("Unable to identify the tutor. Please log in again.")
+        return redirect("/login")
+
+    if bd.get_group_by_email_tutor(email_tutor):
+        bd.update_group(form_data, email_tutor)
         return redirect("/panel-tutor")
+    else:
+        # Proceed if email is found
+        if bd.group_exists(form_data["email"]):
+            flash("Unsuccessful registration - email already exists")
+            return redirect("/signup-group")
+        else:
+            bd.insert_group(form_data, email_tutor=email_tutor)
+            return redirect("/panel-tutor")
 
 
 @app.route("/add-group", methods=["GET"])
@@ -128,6 +147,30 @@ def add_group():
 
 @app.route("/edit-group", methods=["GET"])
 def edit_group():
+    # Retrieve the email of the tutor from the session
+    email_tutor = session.get("email_user")
+    if not email_tutor:
+        flash("Unable to identify the tutor. Please log in again.")
+        return redirect("/login")
+
+    # Fetch group data from the database where email_tutor matches
+    group_data = bd.get_group_by_email_tutor(email_tutor)
+    print(group_data)
+
+    if group_data:
+        # Store fetched group data in session
+        session['signup_group_data'] = {
+            "email": group_data[0],
+            "name": group_data[1],
+            "insta": group_data[2],
+            "page": group_data[3],
+            "nof_scholarships": group_data[4],
+            "nof_volunteers": group_data[5],
+            "address": group_data[6],
+            "campus": group_data[7],
+            "center": group_data[8]
+        }
+
     return redirect("/signup-group")
 
 
