@@ -20,9 +20,10 @@ def hash_password(password):
 
 def login(email, password):
     cnx = mysql.connector.connect(**config)
-    cursor = cnx.cursor()
+    # Use dictionary cursor for easier access
+    cursor = cnx.cursor(dictionary=True)
 
-    query = "select password from tutors where email = %s"
+    query = "SELECT name, email, password FROM tutors WHERE email = %s"
     cursor.execute(query, (email, ))
 
     result = cursor.fetchone()
@@ -32,10 +33,15 @@ def login(email, password):
     if result is None:
         return False
 
-    stored_password = result[0]
+    stored_password = result['password']
     if bcrypt.checkpw(password.encode('utf-8'),
                       stored_password.encode('utf-8')):
-        return True
+        # Return user details except password
+        user = {
+            'name': result['name'],
+            'email': result['email']
+        }
+        return user
     else:
         return False
 
@@ -73,6 +79,40 @@ def insert_tutor(name, status_claa, email, password):
 
     cursor.close()
     cnx.close()
+
+
+def report_exists(email):
+    cnx = mysql.connector.connect(**config)
+    cursor = cnx.cursor()
+
+    query = ("select 1 from reports where group_email = %s and year = %s")
+    cursor.execute(query, (email, datetime.now().year))
+    report_exists = cursor.fetchone()
+
+    cursor.close()
+    cnx.close()
+
+    if report_exists is None:
+        return False
+    else:
+        return True
+
+
+def tutor_has_group(email):
+    cnx = mysql.connector.connect(**config)
+    cursor = cnx.cursor()
+
+    query = ("select 1 from groups where email_tutor = %s")
+    cursor.execute(query, (email, ))
+    tutor_has_group = cursor.fetchone()
+
+    cursor.close()
+    cnx.close()
+
+    if tutor_has_group is None:
+        return False
+    else:
+        return True
 
 
 def group_exists(email):
@@ -118,18 +158,17 @@ def insert_group(name, email, insta, page, nof_scholarships, nof_volunteers,
 
 
 def reset_report_session():
-    # session_keys = [
-    #     'scheduled_activities', 'unscheduled_activities',
-    #     'activities_articulation', 'politics_articulation',
-    #     'selection_students', 'permanence_students',
-    #     'ufsc_target_public', 'society_target_public',
-    #     'infrastructure_condition', 'infrastructure_description',
-    #     'tools_condition', 'tools_description',
-    #     'costing_condition', 'costing_description']
-    #
-    # for key in session_keys:
-    #     session.pop(key, None)
-    session.clear()
+    session_keys = [
+        'scheduled_activities', 'unscheduled_activities',
+        'activities_articulation', 'politics_articulation',
+        'selection_students', 'permanence_students',
+        'ufsc_target_public', 'society_target_public',
+        'infrastructure_condition', 'infrastructure_description',
+        'tools_condition', 'tools_description',
+        'costing_condition', 'costing_description']
+
+    for key in session_keys:
+        session.pop(key, None)
 
 
 def insert_report():
@@ -148,7 +187,7 @@ def insert_report():
         "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
     )
 
-    group_email = "1@1"  # Replace with dynamic value as needed
+    group_email = "1@1"  # It should exist in groups table
 
     data = (
         session.get('activities_articulation'),

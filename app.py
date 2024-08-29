@@ -1,4 +1,5 @@
 from flask import Flask, session, flash, render_template, redirect, request
+
 from bd import bd
 
 
@@ -8,12 +9,12 @@ app = Flask(__name__)
 # route: caminho do site | / caminho default
 # função: o que quer exibir na página
 
-app.config["SECRET_KEY"] = "CLAA"
+app.config["SECRET_KEY"] = "CLAA"  # replace with a security key
 
 
 @app.route("/")
 def home():
-    return redirect("/report-0")
+    return redirect("/signup-tutor")
 
 
 @app.route("/login", methods=["GET"])
@@ -26,21 +27,46 @@ def submit_login():
     email = request.form.get("email")
     password = request.form.get("password")
 
-    user_authenticated = bd.login(email, password)
+    user = bd.login(email, password)
 
-    if user_authenticated:
-        return redirect("/panel")
+    if user:
+        session['name_tutor'] = user['name']
+        session['email_tutor'] = user['email']
+        return redirect("/panel-tutor")
     else:
         flash("Uncessuful login - user not registered or incorrect password")
         return redirect("/login")
 
 
-@app.route("/signup-tutor", methods=["GET"])
+@app.route('/logout')
+def logout():
+    session.pop('email_tutor', None)
+    session.pop('name_tutor', None)
+    return redirect('/login')
+
+
+@app.route("/panel-tutor", methods=["GET"])
+def panel_tutor():
+    if 'email_tutor' in session:
+        name_tutor = session['name_tutor']
+
+        report_exists = bd.report_exists(session['email_tutor'])
+
+        tutor_has_group = bd.group_exists(session['email_tutor'])
+
+        return render_template('panel-tutor.html', name_tutor=name_tutor,
+                               tutor_has_group=tutor_has_group,
+                               report_exists=report_exists)
+    else:
+        return redirect('/login')
+
+
+@ app.route("/signup-tutor", methods=["GET"])
 def signup_tutor():
     return render_template("signup-tutor.html")
 
 
-@app.route("/submit-signup-tutor", methods=["POST"])
+@ app.route("/submit-signup-tutor", methods=["POST"])
 def submit_signup_tutor():
     name = request.form.get("name")
     status_claa = request.form.get("status-claa")
@@ -55,12 +81,12 @@ def submit_signup_tutor():
         return redirect("/login")
 
 
-@app.route("/signup-group", methods=["GET"])
+@ app.route("/signup-group", methods=["GET"])
 def signup_group():
     return render_template("signup-group.html")
 
 
-@app.route("/submit-signup-group", methods=["POST"])
+@ app.route("/submit-signup-group", methods=["POST"])
 def submit_signup_group():
     name = request.form.get("name")
     email = request.form.get("email")
@@ -78,16 +104,36 @@ def submit_signup_group():
     else:
         bd.insert_group(name, email, insta, page, nof_scholarships,
                         nof_volunteers, address, campus, center)
-        return redirect("/panel")
+        return redirect("/panel-tutor")
 
 
-@app.route("/report-0", methods=["GET"])
+@app.route("/add-group", methods=["GET"])
+def add_group():
+    return redirect("/signup-group")
+
+
+@app.route("/edit-group", methods=["GET"])
+def edit_group():
+    return redirect("/signup-group")
+
+
+@app.route("/add-report", methods=["GET"])
+def add_report():
+    return redirect("/report-0")
+
+
+@app.route("/edit-report", methods=["GET"])
+def edit_report():
+    return redirect("/report-0")
+
+
+@ app.route("/report-0", methods=["GET"])
 def report_0():
     bd.reset_report_session()
     return render_template("report-0.html")
 
 
-@app.route("/submit-report-0", methods=["POST"])
+@ app.route("/submit-report-0", methods=["POST"])
 def submit_report_0():
     activities = []
 
@@ -249,12 +295,7 @@ def submit_report_9():
 def submit_report():
     bd.insert_report()
 
-    return redirect("/panel")
-
-
-@app.route("/panel", methods=["GET"])
-def panel():
-    return render_template("panel.html")
+    return redirect("/panel-tutor")
 
 
 if __name__ == "__main__":
