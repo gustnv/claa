@@ -1,4 +1,5 @@
-<!DOCTYPE html> <html lang="pt-BR">
+<!DOCTYPE html>
+<html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -14,65 +15,65 @@
 
     <form id="activity-form" action="/submit-report-0" method="POST">
       <div id="activities-container">
-
-        <div id="activity-0" class="activity-form relative">
+        {% for activity in scheduled_activities %}
+        <div id="activity-{{ loop.index0 }}" class="activity-form relative">
           <button type="button" class="remove-activity absolute top-0 right-0 text-red-600 hover:text-red-800" aria-label="Remove Activity">
            Excluir Atividade &#x2716;  
           </button>
 
           <div class="mb-8">
             <label class="block mb-2 text-sm font-medium text-gray-600">Nome da atividade</label>
-            <input name="name-0" class="activity-name w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:ring focus:border-blue-300" type="text" required>
+            <input name="name-{{ loop.index0 }}" value="{{ activity.name }}" class="activity-name w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:ring focus:border-blue-300" type="text" required>
           </div>
 
           <div class="mb-8">
             <label class="block mb-2 text-sm font-medium text-gray-600">Realização da atividade</label>
-            <select name="carrying-out-0" class="tutor-status w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:ring focus:border-blue-300" required>
-              <option value="" disabled selected>Selecione uma opção</option>
-              <option value="full">Totalmente realizada.</option>
-              <option value="partial">Parcialmente realizada.</option>
-              <option value="not">Não realizada.</option>
+            <select name="carrying-out-{{ loop.index0 }}" class="tutor-status w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:ring focus:border-blue-300" required>
+              <option value="" disabled {% if not activity.carrying_out %}selected{% endif %}>Selecione uma opção</option>
+              <option value="full" {% if activity.carrying_out == 'full' %}selected{% endif %}>Totalmente realizada.</option>
+              <option value="partial" {% if activity.carrying_out == 'partial' %}selected{% endif %}>Parcialmente realizada.</option>
+              <option value="not" {% if activity.carrying_out == 'not' %}selected{% endif %}>Não realizada.</option>
             </select>
           </div>
 
           <div class="mb-8">
             <label class="block mb-2 text-sm font-medium text-gray-600">Horas Totais Investidas</label>
-            <input name="total-hours-0" min="0" class="total-hours w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:ring focus:border-blue-300" type="number" required>
+            <input name="total-hours-{{ loop.index0 }}" min="0" value="{{ activity.total_hours }}" class="total-hours w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:ring focus:border-blue-300" type="number" required>
           </div>
 
           <div class="mb-8">
             <label class="block mb-2 text-sm font-medium text-gray-600">Classificação da Atividade</label>
             <div class="flex items-center mb-4">
-              <input type="checkbox" class="ensino mr-2">
+              <input type="checkbox" class="ensino mr-2" {% if activity.teaching_hours|int > 0 %}checked{% endif %}>
               <label class="mr-9 text-gray-600">Ensino</label>
-              <input name="teaching-hours-0" min="0" class="ensino-number w-20 px-2 py-1 text-gray-700 border rounded-lg focus:outline-none focus:ring focus:border-blue-300" type="number" value="0" disabled>
+              <input name="teaching-hours-{{ loop.index0 }}" min="0" value="{{ activity.teaching_hours }}" class="ensino-number w-20 px-2 py-1 text-gray-700 border rounded-lg focus:outline-none focus:ring focus:border-blue-300" type="number" {% if activity.teaching_hours|int == 0 %}disabled{% endif %}>
             </div>
             <div class="flex items-center mb-4">
-              <input type="checkbox" class="pesquisa mr-2">
-              <label class="mr-5 text-gray-600">Pesquisa </label>
-              <input name="research-hours-0" min="0" class="pesquisa-number w-20 px-2 py-1 text-gray-700 border rounded-lg focus:outline-none focus:ring focus:border-blue-300" type="number" value="0" disabled>
+              <input type="checkbox" class="pesquisa mr-2" {% if activity.research_hours|int > 0 %}checked{% endif %}>
+              <label class="mr-5 text-gray-600">Pesquisa</label>
+              <input name="research-hours-{{ loop.index0 }}" min="0" value="{{ activity.research_hours }}" class="pesquisa-number w-20 px-2 py-1 text-gray-700 border rounded-lg focus:outline-none focus:ring focus:border-blue-300" type="number" {% if activity.research_hours|int == 0 %}disabled{% endif %}>
             </div>
             <div class="flex items-center mb-4">
-              <input type="checkbox" class="extensao mr-2">
+              <input type="checkbox" class="extensao mr-2" {% if activity.extension_hours|int > 0 %}checked{% endif %}>
               <label class="mr-4 text-gray-600">Extensão</label>
-              <input name="extension-hours-0" min="0" class="extensao-number w-20 px-2 py-1 text-gray-700 border rounded-lg focus:outline-none focus:ring focus:border-blue-300" type="number" value="0" disabled>
+              <input name="extension-hours-{{ loop.index0 }}" min="0" value="{{ activity.extension_hours }}" class="extensao-number w-20 px-2 py-1 text-gray-700 border rounded-lg focus:outline-none focus:ring focus:border-blue-300" type="number" {% if activity.extension_hours|int == 0 %}disabled{% endif %}>
             </div>
 
             <p class="incompatible-hours text-red-600" style="display:none">As horas somadas devem ser iguais as horas totais.</p>
           </div>
           <hr class="my-8 border-t border-gray-300">
         </div>
+        {% endfor %}
       </div>
 
-      <button id="add-activity-btn" class="w-full px-4 py-2 mb-8 text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none focus:bg-blue-700" type="button">Adicionar Mais Atividades Programadas</button>
+      <button id="add-activity-btn" class="w-full px-4 py-2 mb-8 text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none focus:bg-blue-700" type="button">Adicionar Atividade Programada</button>
       <button class="w-full px-4 py-2 text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none focus:bg-blue-700" type="submit">Prosseguir</button>
-
     </form>
   </div>
 
   <script>
-    var activityCounter = 1;
-    var validFlags = [];
+    var activityCounter = {{ scheduled_activities|length }};
+    var validFlags = Array(activityCounter).fill(true);
 
     function checkHours(activityForm) {
       var total = Number(activityForm.querySelector('.total-hours').value);
@@ -144,103 +145,83 @@
       validFlags[activityIndex] = checkHours(activityForm);
     }
 
-
-    function addActivity() {
-      var container = document.getElementById('activities-container');
-
-      // Create a new activity div with all necessary classes and elements
-      var newActivity = document.createElement('div');
-      newActivity.id = 'activity-' + activityCounter;
-      newActivity.classList.add('activity-form', 'relative');
-
-      newActivity.innerHTML = `
-          <button type="button" class="remove-activity absolute top-0 right-0 text-red-600 hover:text-red-800" aria-label="Remove Activity">
-              Excluir Atividade &#x2716;
-          </button>
-
-          <div class="mb-8">
-              <label class="block mb-2 text-sm font-medium text-gray-600">Nome da atividade</label>
-              <input name="name-${activityCounter}" class="activity-name w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:ring focus:border-blue-300" type="text" required>
-          </div>
-
-          <div class="mb-8">
-              <label class="block mb-2 text-sm font-medium text-gray-600">Realização da atividade</label>
-              <select name="carrying-out-${activityCounter}" class="tutor-status w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:ring focus:border-blue-300" required>
-                  <option value="" disabled selected>Selecione uma opção</option>
-                  <option value="full">Totalmente realizada.</option>
-                  <option value="partial">Parcialmente realizada.</option>
-                  <option value="not">Não realizada.</option>
-              </select>
-          </div>
-
-          <div class="mb-8">
-              <label class="block mb-2 text-sm font-medium text-gray-600">Horas Totais Investidas</label>
-              <input name="total-hours-${activityCounter}" min="0" class="total-hours w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:ring focus:border-blue-300" type="number" required>
-          </div>
-
-          <div class="mb-8">
-              <label class="block mb-2 text-sm font-medium text-gray-600">Classificação da Atividade</label>
-              <div class="flex items-center mb-4">
-                  <input type="checkbox" class="ensino mr-2">
-                  <label class="mr-9 text-gray-600">Ensino</label>
-                  <input name="teaching-hours-${activityCounter}" min="0" class="ensino-number w-20 px-2 py-1 text-gray-700 border rounded-lg focus:outline-none focus:ring focus:border-blue-300" type="number" value="0" disabled>
-              </div>
-              <div class="flex items-center mb-4">
-                  <input type="checkbox" class="pesquisa mr-2">
-                  <label class="mr-5 text-gray-600">Pesquisa </label>
-                  <input name="research-hours-${activityCounter}" min="0" class="pesquisa-number w-20 px-2 py-1 text-gray-700 border rounded-lg focus:outline-none focus:ring focus:border-blue-300" type="number" value="0" disabled>
-              </div>
-              <div class="flex items-center mb-4">
-                  <input type="checkbox" class="extensao mr-2">
-                  <label class="mr-4 text-gray-600">Extensão</label>
-                  <input name="extension-hours-${activityCounter}" min="0" class="extensao-number w-20 px-2 py-1 text-gray-700 border rounded-lg focus:outline-none focus:ring focus:border-blue-300" type="number" value="0" disabled>
-              </div>
-
-              <p class="incompatible-hours text-red-600" style="display:none">As horas somadas devem ser iguais as horas totais.</p>
-          </div>
-          <hr class="my-8 border-t border-gray-300">
-      `;
-
-      validFlags[activityCounter] = false;  // Initially set to false
-      activityCounter++;
-
-      addEventListeners(newActivity);
-      container.appendChild(newActivity);
-    }
-
     function removeActivity(activityForm) {
       var activityIndex = parseInt(activityForm.id.split('-')[1]);
-      validFlags.splice(activityIndex, 1);  // Remove flag for this activity
       activityForm.remove();
-
-      // Update IDs and reassign event listeners to keep the order correct
-      var activityForms = document.querySelectorAll('.activity-form');
-      activityForms.forEach((form, index) => {
-        form.id = `activity-${index}`;
-        validFlags[index] = validFlags[index] || false;  // Ensure validFlags array is still accurate
-      });
-
-      if (activityForms.length === 0) {
-        activityCounter = 1;  // Reset counter to start from 1
-      } else {
-        activityCounter = activityForms.length;
-      }
+      validFlags[activityIndex] = true; // Mark as valid since it's removed
     }
 
+    document.querySelectorAll('.activity-form').forEach(function(form) {
+      addEventListeners(form);
+    });
 
-    document.getElementById('add-activity-btn').addEventListener('click', addActivity);
+    document.getElementById('add-activity-btn').addEventListener('click', function() {
+      var container = document.getElementById('activities-container');
 
-    // Add event listeners to the initial activity form
-    addEventListeners(document.getElementById('activity-0'));
-    validFlags[0] = false;  // Initially set to false
+      var newActivity = document.createElement('div');
+      newActivity.classList.add('activity-form', 'relative');
+      newActivity.id = 'activity-' + activityCounter;
+
+      newActivity.innerHTML = `
+      <button type="button" class="remove-activity absolute top-0 right-0 text-red-600 hover:text-red-800" aria-label="Remove Activity">
+        Excluir Atividade &#x2716;  
+      </button>
+
+      <div class="mb-8">
+        <label class="block mb-2 text-sm font-medium text-gray-600">Nome da atividade</label>
+        <input name="name-${activityCounter}" class="activity-name w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:ring focus:border-blue-300" type="text" required>
+      </div>
+
+      <div class="mb-8">
+        <label class="block mb-2 text-sm font-medium text-gray-600">Realização da atividade</label>
+        <select name="carrying-out-${activityCounter}" class="tutor-status w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:ring focus:border-blue-300" required>
+          <option value="" disabled selected>Selecione uma opção</option>
+          <option value="full">Totalmente realizada.</option>
+          <option value="partial">Parcialmente realizada.</option>
+          <option value="not">Não realizada.</option>
+        </select>
+      </div>
+
+      <div class="mb-8">
+        <label class="block mb-2 text-sm font-medium text-gray-600">Horas Totais Investidas</label>
+        <input name="total-hours-${activityCounter}" min="0" class="total-hours w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:ring focus:border-blue-300" type="number" required>
+      </div>
+
+      <div class="mb-8">
+        <label class="block mb-2 text-sm font-medium text-gray-600">Classificação da Atividade</label>
+        <div class="flex items-center mb-4">
+          <input type="checkbox" class="ensino mr-2">
+          <label class="mr-9 text-gray-600">Ensino</label>
+          <input name="teaching-hours-${activityCounter}" min="0" class="ensino-number w-20 px-2 py-1 text-gray-700 border rounded-lg focus:outline-none focus:ring focus:border-blue-300" type="number" disabled>
+        </div>
+        <div class="flex items-center mb-4">
+          <input type="checkbox" class="pesquisa mr-2">
+          <label class="mr-5 text-gray-600">Pesquisa</label>
+          <input name="research-hours-${activityCounter}" min="0" class="pesquisa-number w-20 px-2 py-1 text-gray-700 border rounded-lg focus:outline-none focus:ring focus:border-blue-300" type="number" disabled>
+        </div>
+        <div class="flex items-center mb-4">
+          <input type="checkbox" class="extensao mr-2">
+          <label class="mr-4 text-gray-600">Extensão</label>
+          <input name="extension-hours-${activityCounter}" min="0" class="extensao-number w-20 px-2 py-1 text-gray-700 border rounded-lg focus:outline-none focus:ring focus:border-blue-300" type="number" disabled>
+        </div>
+
+        <p class="incompatible-hours text-red-600" style="display:none">As horas somadas devem ser iguais as horas totais.</p>
+      </div>
+      <hr class="my-8 border-t border-gray-300">
+      `;
+
+      container.appendChild(newActivity);
+      addEventListeners(newActivity);
+      validFlags.push(false); // Append a new flag for this activity
+      activityCounter++;
+    });
 
     document.getElementById('activity-form').addEventListener('submit', function(event) {
-      var allValid = validFlags.filter(flag => flag !== null).every(Boolean);
-
-      if (!allValid) {
+      if (!validFlags.every(Boolean)) {
         event.preventDefault();
       }
     });
+
   </script>
 </body>
 </html>

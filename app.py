@@ -225,7 +225,6 @@ def edit_report():
         session['costing_description'] = report_data[12]
 
     scheduled_activities = bd.get_scheduled_activities(report_id)
-    print(scheduled_activities)
     if scheduled_activities:
         session['scheduled_activities'] = scheduled_activities
 
@@ -239,8 +238,7 @@ def edit_report():
 @ app.route("/report-0", methods=["GET"])
 def report_0():
     scheduled_activities = session.get('scheduled_activities', [])
-    print(scheduled_activities)
-    return render_template("report-0.html", scheduled_activities=scheduled_activities, enumerate=enumerate)
+    return render_template("report-0.html", scheduled_activities=scheduled_activities)
 
 
 @ app.route("/submit-report-0", methods=["POST"])
@@ -273,8 +271,8 @@ def submit_report_0():
 
 @ app.route("/report-1", methods=["GET"])
 def report_1():
-    print(session)
-    return render_template("report-1.html")
+    unscheduled_activities = session.get('unscheduled_activities', [])
+    return render_template("report-1.html", unscheduled_activities=unscheduled_activities)
 
 
 @ app.route("/submit-report-1", methods=["POST"])

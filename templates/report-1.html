@@ -1,4 +1,5 @@
-<!DOCTYPE html> <html lang="pt-BR">
+<!DOCTYPE html>
+<html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -14,54 +15,56 @@
 
     <form id="activity-form" action="/submit-report-1" method="post">
       <div id="activities-container">
-
-        <div id="activity-0" class="activity-form relative">
+        <!-- Render existing unscheduled activities -->
+        {% for activity in unscheduled_activities %}
+        <div id="activity-{{ loop.index0 }}" class="activity-form relative">
           <button type="button" class="remove-activity absolute top-0 right-0 text-red-600 hover:text-red-800" aria-label="Remove Activity">
-           Excluir Atividade &#x2716;  
+            Excluir Atividade &#x2716;
           </button>
 
           <div class="mb-8">
             <label class="block mb-2 text-sm font-medium text-gray-600">Nome da atividade</label>
-            <input name="name-0" class="activity-name w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:ring focus:border-blue-300" type="text" required>
+            <input name="name-{{ loop.index0 }}" value="{{ activity.name }}" class="activity-name w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:ring focus:border-blue-300" type="text" required>
           </div>
 
           <div class="mb-8">
             <label class="block mb-2 text-sm font-medium text-gray-600">Justificativa para realização da atividade</label>
-            <textarea name="justification-0" style="resize:none" class="justificativa w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:ring focus:border-blue-300" maxlength="500" rows="4" required></textarea>
+            <textarea name="justification-{{ loop.index0 }}" style="resize:none" class="justificativa w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:ring focus:border-blue-300" maxlength="500" rows="4" required>{{ activity.justification }}</textarea>
           </div>
 
           <div class="mb-8">
             <label class="block mb-2 text-sm font-medium text-gray-600">Horas Totais Investidas</label>
-            <input name="total-hours-0" min="0" class="total-hours w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:ring focus:border-blue-300" type="number" required>
+            <input name="total-hours-{{ loop.index0 }}" value="{{ activity.total_hours }}" min="1" class="total-hours w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:ring focus:border-blue-300" type="number" required>
           </div>
 
           <div class="mb-8">
             <label class="block mb-2 text-sm font-medium text-gray-600">Classificação da Atividade</label>
             <div class="flex items-center mb-4">
-              <input type="checkbox" class="ensino mr-2">
+              <input type="checkbox" class="ensino mr-2" {% if activity.teaching_hours|int > 0 %}checked{% endif %}>
               <label class="mr-9 text-gray-600">Ensino</label>
-              <input name="teaching-hours-0" min="0" class="ensino-number w-20 px-2 py-1 text-gray-700 border rounded-lg focus:outline-none focus:ring focus:border-blue-300" type="number" value="0" disabled>
+              <input name="teaching-hours-{{ loop.index0 }}" value="{{ activity.teaching_hours }}" min="0" class="ensino-number w-20 px-2 py-1 text-gray-700 border rounded-lg focus:outline-none focus:ring focus:border-blue-300" type="number" {% if activity.teaching_hours|int == 0 %}disabled{% endif %}>
             </div>
 
             <div class="flex items-center mb-4">
-              <input type="checkbox" class="pesquisa mr-2">
-              <label class="mr-5 text-gray-600">Pesquisa </label>
-              <input name="research-hours-0" min="0" class="pesquisa-number w-20 px-2 py-1 text-gray-700 border rounded-lg focus:outline-none focus:ring focus:border-blue-300" type="number" value="0" disabled>
+              <input type="checkbox" class="pesquisa mr-2" {% if activity.research_hours|int > 0 %}checked{% endif %}>
+              <label class="mr-5 text-gray-600">Pesquisa</label>
+              <input name="research-hours-{{ loop.index0 }}" value="{{ activity.research_hours }}" min="0" class="pesquisa-number w-20 px-2 py-1 text-gray-700 border rounded-lg focus:outline-none focus:ring focus:border-blue-300" type="number" {% if activity.research_hours|int == 0 %}disabled{% endif %}>
             </div>
 
             <div class="flex items-center mb-4">
-              <input type="checkbox" class="extensao mr-2">
+              <input type="checkbox" class="extensao mr-2" {% if activity.extension_hours|int > 0 %}checked{% endif %}>
               <label class="mr-4 text-gray-600">Extensão</label>
-              <input name="extension-hours-0" min="0" class="extensao-number w-20 px-2 py-1 text-gray-700 border rounded-lg focus:outline-none focus:ring focus:border-blue-300" type="number" value="0" disabled>
+              <input name="extension-hours-{{ loop.index0 }}" value="{{ activity.extension_hours }}" min="0" class="extensao-number w-20 px-2 py-1 text-gray-700 border rounded-lg focus:outline-none focus:ring focus:border-blue-300" type="number" {% if activity.extension_hours|int == 0 %}disabled{% endif %}>
             </div>
 
             <p class="incompatible-hours text-red-600" style="display:none">As horas somadas devem ser iguais as horas totais.</p>
           </div>
           <hr class="my-8 border-t border-gray-300">
         </div>
+        {% endfor %}
       </div>
 
-      <button id="add-activity-btn" class="w-full px-4 py-2 mb-8 text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none focus:bg-blue-700" type="button">Adicionar Mais Atividades Não Programadas e Realizadas</button>
+      <button id="add-activity-btn" class="w-full px-4 py-2 mb-8 text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none focus:bg-blue-700" type="button">Adicionar Atividade Não Programada e Realizada</button>
       <div class="flex justify-between">
         <a href="/report-0" class="w-1/2 mr-2 px-4 py-2 text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none focus:bg-blue-700 text-center"><b>Voltar</b></a>
         <button class="w-1/2 ml-2 px-4 py-2 text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none focus:bg-blue-700" type="submit">Prosseguir</button>
@@ -71,8 +74,8 @@
   </div>
 
   <script>
-    var activityCounter = 1;
-    var validFlags = [];
+    var activityCounter = {{ unscheduled_activities|length }};
+    var validFlags = Array(activityCounter).fill(true);
 
     function checkHours(activityForm) {
       var total = Number(activityForm.querySelector('.total-hours').value);
@@ -144,13 +147,23 @@
       validFlags[activityIndex] = checkHours(activityForm);
     }
 
+    function removeActivity(activityForm) {
+      var activityIndex = parseInt(activityForm.id.split('-')[1]);
+      activityForm.remove();
+      validFlags[activityIndex] = true; // Mark as valid since it's removed
+    }
+
+    document.querySelectorAll('.activity-form').forEach(function(form) {
+      addEventListeners(form);
+    });
+
     function addActivity() {
       var container = document.getElementById('activities-container');
 
       // Create a new activity div with all necessary classes and elements
       var newActivity = document.createElement('div');
-      newActivity.id = 'activity-' + activityCounter;
       newActivity.classList.add('activity-form', 'relative');
+      newActivity.id = 'activity-' + activityCounter;
 
       newActivity.innerHTML = `
           <button type="button" class="remove-activity absolute top-0 right-0 text-red-600 hover:text-red-800" aria-label="Remove Activity">
@@ -169,7 +182,7 @@
 
           <div class="mb-8">
               <label class="block mb-2 text-sm font-medium text-gray-600">Horas Totais Investidas</label>
-              <input name="total-hours-${activityCounter}" min="0" class="total-hours w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:ring focus:border-blue-300" type="number" required>
+              <input name="total-hours-${activityCounter}" min="1" class="total-hours w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:ring focus:border-blue-300" type="number" required>
           </div>
 
           <div class="mb-8">
@@ -203,32 +216,7 @@
       addEventListeners(newActivity);
       container.appendChild(newActivity);
     }
-
-    function removeActivity(activityForm) {
-      var activityIndex = parseInt(activityForm.id.split('-')[1]);
-      validFlags.splice(activityIndex, 1);  // Remove flag for this activity
-      activityForm.remove();
-
-      // Update IDs and reassign event listeners to keep the order correct
-      var activityForms = document.querySelectorAll('.activity-form');
-      activityForms.forEach((form, index) => {
-        form.id = `activity-${index}`;
-        validFlags[index] = validFlags[index] || false;  // Ensure validFlags array is still accurate
-      });
-
-      if (activityForms.length === 0) {
-        activityCounter = 1;  // Reset counter to start from 1
-      } else {
-        activityCounter = activityForms.length;
-      }
-    }
-
-
     document.getElementById('add-activity-btn').addEventListener('click', addActivity);
-
-    // Add event listeners to the initial activity form
-    addEventListeners(document.getElementById('activity-0'));
-    validFlags[0] = false;  // Initially set to false
 
     document.getElementById('activity-form').addEventListener('submit', function(event) {
       var allValid = validFlags.filter(flag => flag !== null).every(Boolean);
