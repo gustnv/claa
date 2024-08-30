@@ -239,7 +239,8 @@ def edit_report():
 @ app.route("/report-0", methods=["GET"])
 def report_0():
     scheduled_activities = session.get('scheduled_activities', [])
-    return render_template("report-0.html", scheduled_activities)
+    print(scheduled_activities)
+    return render_template("report-0.html", scheduled_activities=scheduled_activities, enumerate=enumerate)
 
 
 @ app.route("/submit-report-0", methods=["POST"])
@@ -261,8 +262,7 @@ def submit_report_0():
                 "total_hours": total_hours,
                 "teaching_hours": teaching_hours or '0',
                 "research_hours": research_hours or '0',
-                "extension_hours": extension_hours or '0',
-                "id": i
+                "extension_hours": extension_hours or '0'
             }
             activities.append(activity)
 
@@ -296,8 +296,7 @@ def submit_report_1():
                 "total_hours": total_hours,
                 "teaching_hours": teaching_hours or '0',
                 "research_hours": research_hours or '0',
-                "extension_hours": extension_hours or '0',
-                "id": i
+                "extension_hours": extension_hours or '0'
             }
             activities.append(activity)
 

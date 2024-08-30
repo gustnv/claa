@@ -550,7 +550,7 @@ def update_report(email_group):
         cursor.execute(query, data)
         cnx.commit()
 
-        # Update scheduled activities
+        # Get report ID
         report_id_query = "SELECT id FROM reports WHERE email_group = %s AND year = %s"
         cursor.execute(report_id_query, (email_group, datetime.now().year))
         report_id = cursor.fetchone()[0]
@@ -559,7 +559,7 @@ def update_report(email_group):
         delete_scheduled_activities = "DELETE FROM scheduled_activities WHERE report_id = %s"
         cursor.execute(delete_scheduled_activities, (report_id,))
 
-        # Insert new scheduled activities
+        # Insert or update scheduled activities
         for activity in session.get('scheduled_activities', []):
             insert_scheduled = (
                 "INSERT INTO scheduled_activities (name, carrying_out,"
@@ -579,11 +579,10 @@ def update_report(email_group):
 
             cursor.execute(insert_scheduled, data_scheduled)
 
-        # Delete existing unscheduled activities
+        # Handle unscheduled activities similarly
         delete_unscheduled_activities = "DELETE FROM unscheduled_activities WHERE report_id = %s"
         cursor.execute(delete_unscheduled_activities, (report_id,))
 
-        # Insert new unscheduled activities
         for activity in session.get('unscheduled_activities', []):
             insert_unscheduled = (
                 "INSERT INTO unscheduled_activities (name, justification,"
