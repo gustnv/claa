@@ -55,6 +55,48 @@ def submit_login():
         return redirect("/login")
 
 
+@app.route('/recover-password/<step>', methods=["GET"])
+def recover_password_step(step):
+    return render_template("recover-password.html", step=step)
+
+
+@app.route('/send-code', methods=["POST"])
+def send_code():
+    email = request.form.get("email")
+    if bd.user_exists(email):
+        if bd.send_code(email):
+            return redirect('/recover-password/code')
+        else:
+            flash("Failed to send code to email")
+            return redirect('/recover-password/email')
+    else:
+        flash("Email not registered")
+        return redirect('/recover-password/email')
+
+
+@app.route('/verify-code', methods=["get", "post"])
+def verify_code():
+    if 'code' in session:
+        code = request.form.get("code")
+        if code == session['code']:
+            return redirect('/recover-password/reset')
+        else:
+            flash("Invalid code")
+            return redirect('/recover-password/code')
+    else:
+        return redirect('/recover-password/email')
+
+
+@app.route('/reset-password', methods=["POST", "get"])
+def reset_password():
+    if 'email' in session:
+        new_password = request.form.get("password")
+        bd.reset_password(new_password)
+        return redirect('/login')
+    else:
+        return redirect('/recover-password/email')
+
+
 @app.route('/logout')
 def logout():
     session.pop('email_user', None)
@@ -98,7 +140,7 @@ def submit_signup_tutor():
     email = request.form.get("email")
     password = request.form.get("password")
 
-    if bd.tutor_exists(email):
+    if bd.user_exists(email):
         flash("Uncessuful registration - email already exists")
         return redirect("/signup-tutor")
     else:

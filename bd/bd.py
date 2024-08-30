@@ -3,6 +3,11 @@ import mysql.connector
 from mysql.connector import Error
 import bcrypt
 from datetime import datetime
+import random
+
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
 
 config = {
     'user': 'root',
@@ -75,7 +80,7 @@ def get_name_user_by_email(email):
 
 
 def claa_member(email):
-    if not tutor_exists(email):
+    if not user_exists(email):
         return False
 
     try:
@@ -102,14 +107,14 @@ def claa_member(email):
         return False
 
 
-def tutor_exists(email):
+def user_exists(email):
     try:
         cnx = mysql.connector.connect(**config)
         cursor = cnx.cursor()
 
         query = "SELECT 1 FROM users WHERE email = %s"
         cursor.execute(query, (email,))
-        tutor_exists = cursor.fetchone()
+        user_exists = cursor.fetchone()
 
     except Error as e:
         print(f"Error: {e}")
@@ -121,7 +126,80 @@ def tutor_exists(email):
         if cnx:
             cnx.close()
 
-    return tutor_exists is not None
+    return user_exists is not None
+
+
+def send_code(email):
+    # Generate a random code (e.g., a 6-digit number)
+    code = str(random.randint(100000, 999999))
+    session['code'] = code
+    session['email'] = email
+
+    # SMTP server configuration
+    smtp_server = "smtp.gmail.com"
+    smtp_port = 587
+    smtp_username = "nunesvianagustavo@gmail.com"
+    smtp_password = "cmdxacndmjfkrptj "
+
+    # Email content
+    sender_email = smtp_username
+    subject = "Your Password Reset Code"
+    body = f"Your password reset code is: {code}"
+
+    # Create the email message
+    msg = MIMEMultipart()
+    msg['From'] = sender_email
+    msg['To'] = email
+    msg['Subject'] = subject
+    msg.attach(MIMEText(body, 'plain'))
+
+    try:
+        # Connect to the SMTP server and send the email
+        server = smtplib.SMTP(smtp_server, smtp_port)
+        server.starttls()  # Secure the connection
+        server.login(smtp_username, smtp_password)
+        server.sendmail(sender_email, email, msg.as_string())
+        server.quit()
+
+        print(f"Code {code} sent to {email}")
+        return True
+
+    except Exception as e:
+        print(f"Failed to send email: {e}")
+        return False
+
+
+def reset_password(new_password):
+    email = session.get('email')
+
+    if not email:
+        print("Error: Email not found in session")
+        return False
+
+    try:
+        # Hash the new password
+        hashed_password = hash_password(new_password)
+
+        cnx = mysql.connector.connect(**config)
+        cursor = cnx.cursor()
+
+        # Update the user's password in the users table
+        update_query = "UPDATE users SET password = %s WHERE email = %s"
+        cursor.execute(update_query, (hashed_password, email))
+        cnx.commit()
+
+        # Clear the session
+        session.pop('code', None)
+        session.pop('email', None)
+
+    except Error as e:
+        print(f"Error: {e}")
+
+    finally:
+        if cursor:
+            cursor.close()
+        if cnx:
+            cnx.close()
 
 
 def insert_tutor(name, status_claa, email, password):
