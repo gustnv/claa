@@ -139,7 +139,7 @@ def send_code(email):
     smtp_server = "smtp.gmail.com"
     smtp_port = 587
     smtp_username = "nunesvianagustavo@gmail.com"
-    smtp_password = "cmdxacndmjfkrptj "
+    smtp_password = ""
 
     # Email content
     sender_email = smtp_username
