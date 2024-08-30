@@ -346,8 +346,72 @@ def get_report_by_email_group(email_group):
     return result
 
 
-def get_session(key):
-    pass
+def get_scheduled_activities(report_id):
+    try:
+        # Establish database connection
+        # Make sure `config` is defined with your database credentials
+        cnx = mysql.connector.connect(**config)
+        # Use dictionary cursor to get results as dictionaries
+        cursor = cnx.cursor(dictionary=True)
+
+        # Define the query
+        query = """
+        SELECT id, name, carrying_out, total_hours, 
+               teaching_hours, research_hours, extension_hours 
+        FROM scheduled_activities 
+        WHERE report_id = %s
+        """
+
+        # Execute the query
+        cursor.execute(query, (report_id,))
+        result = cursor.fetchall()  # Fetch all results
+
+    except Error as e:
+        print(f"Error: {e}")
+        return None
+
+    finally:
+        # Clean up database resources
+        if cursor:
+            cursor.close()
+        if cnx:
+            cnx.close()
+
+    return result
+
+
+def get_unscheduled_activities(report_id):
+    try:
+        # Establish database connection
+        # Make sure `config` is defined with your database credentials
+        cnx = mysql.connector.connect(**config)
+        # Use dictionary cursor to get results as dictionaries
+        cursor = cnx.cursor(dictionary=True)
+
+        # Define the query
+        query = """
+        SELECT id, name, justification, total_hours, 
+               teaching_hours, research_hours, extension_hours 
+        FROM unscheduled_activities 
+        WHERE report_id = %s
+        """
+
+        # Execute the query
+        cursor.execute(query, (report_id,))
+        result = cursor.fetchall()  # Fetch all results
+
+    except Error as e:
+        print(f"Error: {e}")
+        return None
+
+    finally:
+        # Clean up database resources
+        if cursor:
+            cursor.close()
+        if cnx:
+            cnx.close()
+
+    return result
 
 
 def reset_session():

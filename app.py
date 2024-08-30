@@ -1,10 +1,22 @@
 from flask import Flask, session, flash, render_template, redirect, request
+from flask_session import Session
 import os
 from bd import bd
 
 app = Flask(__name__)
 
+# Configure Flask session
 app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY", "default_key")
+
+# Use server-side session
+# You can also use 'redis', 'memcached', 'sqlalchemy', etc.
+app.config["SESSION_TYPE"] = "filesystem"  # session storage in sever side
+app.config["SESSION_FILE_DIR"] = os.path.join(
+    app.instance_path, 'flask_session')  # Directory to store session files
+app.config["SESSION_PERMANENT"] = False
+app.config["SESSION_USE_SIGNER"] = True  # Adds an extra layer of security
+Session(app)
+
 config = {
     'user': os.environ.get('DB_USER', 'root'),
     'password': os.environ.get('DB_PASSWORD', 'P4ssw0rd!'),
@@ -96,6 +108,12 @@ def submit_signup_tutor():
 
 @ app.route("/signup-group", methods=["GET"])
 def signup_group():
+    # Check for tutor email in session
+    email_tutor = session.get("email_user")
+    if not email_tutor:
+        # Store form data in session
+        return redirect("/login")
+
     form_data = session.get('signup_group_data', {})
 
     session.pop('signup_group_data', None)
@@ -140,17 +158,19 @@ def submit_signup_group():
 
 @ app.route("/add-group", methods=["GET"])
 def add_group():
+    email_tutor = session.get("email_user")
+    if not email_tutor:
+        return redirect("/login")
+
     return redirect("/signup-group")
 
 
 @ app.route("/edit-group", methods=["GET"])
 def edit_group():
-    # Retrieve the email of the tutor from the session
     email_tutor = session.get("email_user")
     if not email_tutor:
         return redirect("/login")
 
-    # Fetch group data from the database where email_tutor matches
     group_data = bd.get_group_by_email_tutor(email_tutor)
 
     if group_data:
@@ -186,9 +206,10 @@ def edit_report():
         return redirect("/login")
 
     # Fetch existing report data if available
-    report_data = bd.get_report_by_email_group(
-        bd.get_email_group_by_tutor(email_tutor))
+    email_group = bd.get_email_group_by_tutor(email_tutor)
 
+    report_data = bd.get_report_by_email_group(email_group)
+    report_id = report_data[0]
     if report_data:
         session['activities_articulation'] = report_data[1]
         session['politics_articulation'] = report_data[2]
@@ -202,15 +223,23 @@ def edit_report():
         session['tools_description'] = report_data[10]
         session['costing_condition'] = report_data[11]
         session['costing_description'] = report_data[12]
-        session['scheduled_activities'] = []  # todo
-        session['unscheduled_activities'] = []  # todo
+
+    scheduled_activities = bd.get_scheduled_activities(report_id)
+    print(scheduled_activities)
+    if scheduled_activities:
+        session['scheduled_activities'] = scheduled_activities
+
+    unscheduled_activities = bd.get_unscheduled_activities(report_id)
+    if unscheduled_activities:
+        session['unscheduled_activities'] = unscheduled_activities
 
     return redirect("/report-0")
 
 
 @ app.route("/report-0", methods=["GET"])
 def report_0():
-    return render_template("report-0.html")
+    scheduled_activities = session.get('scheduled_activities', [])
+    return render_template("report-0.html", scheduled_activities)
 
 
 @ app.route("/submit-report-0", methods=["POST"])
@@ -244,6 +273,7 @@ def submit_report_0():
 
 @ app.route("/report-1", methods=["GET"])
 def report_1():
+    print(session)
     return render_template("report-1.html")
 
 
@@ -402,6 +432,11 @@ def submit_report_9():
 
 @ app.route("/submit-report", methods=["GET"])
 def submit_report():
+    # Check for tutor email in session
+    email_tutor = session.get("email_user")
+    if not email_tutor:
+        return redirect("/login")
+
     email_group = bd.get_email_group_by_tutor(session['email_user'])
     if bd.report_exists(email_group):
         bd.update_report(email_group)
