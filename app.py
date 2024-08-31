@@ -2,6 +2,7 @@ from flask import Flask, session, flash, render_template, redirect, request
 from flask_session import Session
 import os
 from bd import bd
+import jsonify
 
 app = Flask(__name__)
 
@@ -128,6 +129,41 @@ def panel_claa():
         return redirect('/login')
 
 
+@app.route("/tutor", methods=["GET"])
+def tutor():
+    if 'email_user' in session:
+        users = bd.get_all_users()
+        return render_template('tutor.html', users=users)
+    else:
+        return redirect('/login')
+
+
+@app.route("/delete-tutor/<email>", methods=["DELETE"])
+def delete_tutor(email):
+    if bd.delete_tutor(email):
+        return {"success": True}, 200
+    else:
+        return {"success": False, "message": "Failed to delete tutor."}, 400
+
+
+@app.route("/invite-tutor", methods=["POST"])
+def invite_tutor():
+    email = request.form.get("email")  # Get the email from the form
+
+    if bd.user_exists(request.form.get("email")):
+        flash("Email already exists. Please try again.")
+    else:
+        if not bd.send_signup_invitation(email):
+            flash("Email already exists. Please try again.", "error")
+
+    return redirect('/tutor')  # Redirect back
+
+
+@ app.route("/submit-tutor", methods=["POST"])
+def submit_tutor():
+    pass
+
+
 @ app.route("/signup-tutor", methods=["GET"])
 def signup_tutor():
     return render_template("signup-tutor.html")
@@ -152,6 +188,7 @@ def submit_signup_tutor():
 def signup_group():
     # Check for tutor email in session
     email_tutor = session.get("email_user")
+    print(email_tutor)
     if not email_tutor:
         # Store form data in session
         return redirect("/login")

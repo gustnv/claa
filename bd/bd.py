@@ -129,6 +129,40 @@ def user_exists(email):
     return user_exists is not None
 
 
+def send_signup_invitation(email):
+    link = "http://127.0.0.1:5000/signup-tutor"
+
+    # SMTP server configuration
+    smtp_server = "smtp.gmail.com"
+    smtp_port = 587
+    smtp_username = "nunesvianagustavo@gmail.com"
+    smtp_password = "cmdxacndmjfkrptj"
+
+    sender_email = smtp_username
+    subject = "Convite para se inscrever como Tutor"
+    body = f"Você foi convidado para se inscrever como tutor. Clique no link para se inscrever: {link}"
+
+    msg = MIMEMultipart()
+    msg['From'] = sender_email
+    msg['To'] = email
+    msg['Subject'] = subject
+    msg.attach(MIMEText(body, 'plain'))
+
+    try:
+        server = smtplib.SMTP(smtp_server, smtp_port)
+        server.starttls()  # Secure the connection
+        server.login(smtp_username, smtp_password)
+        server.sendmail(sender_email, email, msg.as_string())
+        server.quit()
+
+        print(f"Invitation sent to {email}")
+        return True
+
+    except Exception as e:
+        print(f"Failed to send email: {e}")
+        return False
+
+
 def send_code(email):
     # Generate a random code (e.g., a 6-digit number)
     code = str(random.randint(100000, 999999))
@@ -139,7 +173,7 @@ def send_code(email):
     smtp_server = "smtp.gmail.com"
     smtp_port = 587
     smtp_username = "nunesvianagustavo@gmail.com"
-    smtp_password = ""
+    smtp_password = "cmdxacndmjfkrptj"
 
     # Email content
     sender_email = smtp_username
@@ -248,12 +282,43 @@ def report_exists(email):
     return report_exists is not None
 
 
+def get_all_users():
+    try:
+        cnx = mysql.connector.connect(**config)
+        cursor = cnx.cursor(dictionary=True)
+
+        # Fetch user data along with their associated group name
+        query = """
+        SELECT 
+            users.email, 
+            users.name, 
+            users.status_claa,
+            groups.name AS group_name
+        FROM users
+        LEFT JOIN claa.groups ON users.email = claa.groups.email_tutor
+        """
+        cursor.execute(query)
+        users = cursor.fetchall()
+
+    except mysql.connector.Error as e:
+        print(f"Error: {e}")
+        return []
+
+    finally:
+        if cursor:
+            cursor.close()
+        if cnx:
+            cnx.close()
+
+    return users
+
+
 def tutor_has_group(email):
     try:
         cnx = mysql.connector.connect(**config)
         cursor = cnx.cursor()
 
-        query = "SELECT 1 FROM groups WHERE email_tutor = %s"
+        query = "SELECT 1 FROM claa.groups WHERE email_tutor = %s"
         cursor.execute(query, (email,))
         tutor_has_group = cursor.fetchone()
 
@@ -268,6 +333,33 @@ def tutor_has_group(email):
             cnx.close()
 
     return tutor_has_group is not None
+
+
+def delete_tutor(email):
+    # Check if the tutor has a group
+    if not tutor_has_group(email):
+        try:
+            cnx = mysql.connector.connect(**config)
+            cursor = cnx.cursor()
+
+            # Delete the tutor from the users table
+            query = "DELETE FROM users WHERE email = %s"
+            cursor.execute(query, (email,))
+            cnx.commit()
+
+            return True
+
+        except mysql.connector.Error as e:
+            print(f"Error: {e}")
+            return False
+
+        finally:
+            if cursor:
+                cursor.close()
+            if cnx:
+                cnx.close()
+    else:
+        return False
 
 
 def get_group_by_email_tutor(email_tutor):

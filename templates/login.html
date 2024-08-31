@@ -48,10 +48,6 @@
         <button class="w-full px-4 py-2 text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none focus:bg-blue-700" type="submit">Registrar</button>
       </div>
 
-      <div id="password-button">
-        <button onclick="hidePassword()" class="block w-full px-4 py-2 text-center text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300 focus:outline-none focus:bg-gray-300">Primeiro acesso</button>
-      </div>
-
     </form>
   </div>
   <script>
@@ -67,22 +63,6 @@
       }
     }
 
-    function hidePassword() {
-      const passwordContainer = document.getElementById('password-container');
-      const passwordField = document.getElementById('password');
-      const passwordButton = document.getElementById('password-button');
-      const loginButton = document.getElementById('login-button');
-      const signupButton = document.getElementById('signup-button');
-      const forms = document.getElementById('forms');
-      const email = document.getElementById('email');
-      email.value = '';
-      passwordContainer.style.display = 'none';
-      passwordField.required = false;
-      passwordButton.style.display = 'none';
-      loginButton.style.display = 'none';
-      signupButton.style.display = 'block';
-      forms.action = 'signup.html';
-    }
   </script>
 </body>
 </html>
