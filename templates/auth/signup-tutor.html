@@ -3,14 +3,30 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Login Page</title>
+  <title>Cadastro</title>
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
+  
 <body class="flex items-center justify-center min-h-screen bg-gray-100">
   <div class="text-center absolute top-5 left-5 font-bold text-lg">CLAA - UFSC</div>
   <div class="w-full max-w-sm p-8 bg-white rounded-lg shadow-md">
-    <h2 class="mb-6 text-2xl font-semibold text-gray-700">Entrar</h2>
-    <form action="/submit-login" id="forms" method="post">
+    <h2 class="mb-6 text-2xl font-semibold text-gray-700">Cadastro</h2>
+
+    <form action="/submit-signup-tutor" id="forms" method="post">
+      <div class="mb-4">
+        <label class="block mb-2 text-sm font-medium text-gray-600" for="email">Insira seu nome</label>
+        <input name="name" class="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:ring focus:border-blue-300" type="name" id="name" name="name" value="" required>
+      </div>
+
+      <div class="mb-8">
+        <label class="block mb-2 text-sm font-medium text-gray-600" for="tutor-status">Status CLAA</label>
+        <select name="status-claa" class="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:ring focus:border-blue-300" id="tutor-status" required>
+          <option value="" disabled selected>É membro do CLAA?</option>
+          <option value="no">Não.</option>
+          <option value="holder">Sim, Titular.</option>
+          <option value="substitute">Sim, Suplente.</option>
+        </select>
+      </div>
 
       <div class="mb-4">
         <label class="block mb-2 text-sm font-medium text-gray-600" for="email">Insira seu email</label>
@@ -20,7 +36,7 @@
       <div class="mb-6" id="password-container">
         <label class="block mb-2 text-sm font-medium text-gray-600" for="password">Insira sua senha</label>
         <div class="relative">
-          <input class="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:ring focus:border-blue-300" type="password" id="password" name="password" value="" required>
+          <input name="password" class="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:ring focus:border-blue-300" type="password" id="password" name="password" value="" required>
           <button type="button" class="absolute inset-y-0 right-0 flex items-center px-3 text-gray-600" onclick="togglePassword()">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
@@ -28,26 +44,18 @@
             </svg>
           </button>
         </div>
-        <div class="mt-2 text-right">
-          <a href="/recover-password/email" class="text-sm text-blue-600 hover:underline">Esqueceu sua senha?</a>
-        </div>
       </div>
 
       {% set message = get_flashed_messages() %}
       {% if message %}
         <div class="mb-4 p-4 text-sm text-red-800 bg-red-100 border border-red-300 rounded-lg">
-         Usuário não cadastrado ou senha incorreta. 
+          O email já está cadastrado.
         </div>
       {% endif %}
 
       <div class="mb-4" id="login-button">
-        <button class="w-full px-4 py-2 text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none focus:bg-blue-700" type="submit">Entrar</button>
+        <button class="w-full px-4 py-2 text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none focus:bg-blue-700" type="submit">Cadastrar</button>
       </div>
-
-      <div class="mb-4" style="display:none" id="signup-button">
-        <button class="w-full px-4 py-2 text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none focus:bg-blue-700" type="submit">Registrar</button>
-      </div>
-
     </form>
   </div>
   <script>
@@ -63,6 +71,22 @@
       }
     }
 
+    function hidePassword() {
+      const passwordContainer = document.getElementById('password-container');
+      const passwordField = document.getElementById('password');
+      const passwordButton = document.getElementById('password-button');
+      const loginButton = document.getElementById('login-button');
+      const signupButton = document.getElementById('signup-button');
+      const forms = document.getElementById('forms');
+      const email = document.getElementById('email');
+      email.value = '';
+      passwordContainer.style.display = 'none';
+      passwordField.required = false;
+      passwordButton.style.display = 'none';
+      loginButton.style.display = 'none';
+      signupButton.style.display = 'block';
+      forms.action = 'signup.html';
+    }
   </script>
 </body>
 </html>

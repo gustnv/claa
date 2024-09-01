@@ -13,7 +13,7 @@
       <h1 class="text-lg font-bold">CLAA - UFSC</h1>
       <div>
         <span class="mr-4">Olá, {{ name_tutor }}</span>
-        <a href="{{ url_for('logout') }}" class="px-4 py-2 bg-white text-blue-600 rounded-lg inline-block">Sair</a>
+        <a href="{{ url_for('auth.logout') }}" class="px-4 py-2 bg-white text-blue-600 rounded-lg inline-block">Sair</a>
       </div>
     </div>
   </header>
@@ -30,7 +30,7 @@
           <h3 class="mb-4 text-lg font-medium text-gray-700">Editar Grupo</h3>
           <p class="mb-6 text-gray-600">Editar informações do grupo.</p>
         </div>
-        <a href="{{ url_for('edit_group') }}" class="w-full block mt-auto">
+        <a href="{{ url_for('group.edit_group') }}" class="w-full block mt-auto">
           <button class="w-full px-4 py-2 text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none focus:bg-blue-700">Editar</button>
         </a>
       </div>
@@ -43,7 +43,7 @@
           <h3 class="mb-4 text-lg font-medium text-gray-700">Editar Relatório</h3>
           <p class="mb-6 text-gray-600">Modificar informações informadas no relatório.</p>
         </div>
-        <a href="{{ url_for('edit_report') }}" class="w-full block mt-auto">
+        <a href="{{ url_for('report.edit_report') }}" class="w-full block mt-auto">
           <button class="w-full px-4 py-2 text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none focus:bg-blue-700">Editar</button>
         </a>
       </div>
@@ -56,7 +56,7 @@
           <h3 class="mb-4 text-lg font-medium text-gray-700">Adicionar Relatório</h3>
           <p class="mb-6 text-gray-600">Preencher relatório com informações sobre as atividades e situação do grupo.</p>
         </div>
-        <a href="{{ url_for('add_report') }}" class="w-full block mt-auto">
+        <a href="{{ url_for('report.add_report') }}" class="w-full block mt-auto">
           <button class="w-full px-4 py-2 text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none focus:bg-blue-700">Adicionar</button>
         </a>
       </div>
@@ -71,7 +71,7 @@
           <h3 class="mb-4 text-lg font-medium text-gray-700">Adicionar Grupo</h3>
           <p class="mb-6 text-gray-600">Adicionar grupo.</p>
         </div>
-        <a href="{{ url_for('add_group') }}" class="w-full block mt-auto">
+        <a href="{{ url_for('group.add_group') }}" class="w-full block mt-auto">
           <button class="w-full px-4 py-2 text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none focus:bg-blue-700">Adicionar</button>
         </a>
       </div>
