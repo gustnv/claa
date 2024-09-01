@@ -105,7 +105,7 @@ CREATE TABLE `reports` (
   `costing_condition` enum('yes','no') NOT NULL,
   `costing_description` varchar(500) NOT NULL,
   `year` year NOT NULL,
-  `email_group` varchar(100) NOT NULL,
+  `email_group` varchar(100) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `email_group` (`email_group`),
   CONSTRAINT `reports_ibfk_1` FOREIGN KEY (`email_group`) REFERENCES `groups` (`email`)

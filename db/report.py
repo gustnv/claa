@@ -135,6 +135,36 @@ def reset_report_session():
     session['unscheduled_activities'] = []
 
 
+def transfer_report(from_email, to_email):
+    """Transfers all reports from one group to another in the database."""
+    try:
+        # Establishing connection to the database
+        cnx = mysql.connector.connect(**config)
+        cursor = cnx.cursor()
+
+        # Query to update the email_group for all reports associated with from_email
+        query = """
+        UPDATE reports 
+        SET email_group = %s 
+        WHERE email_group = %s
+        """
+
+        # Execute the query to transfer the reports
+        cursor.execute(query, (to_email, from_email))
+        cnx.commit()  # Commit the transaction to save changes
+
+        print(f"Transferring reports from {from_email} to {to_email}")
+
+    except Error as e:
+        print(f"Error: {e}")
+
+    finally:
+        if cursor:
+            cursor.close()
+        if cnx:
+            cnx.close()
+
+
 def insert_report(email_group):
     try:
         cnx = mysql.connector.connect(**config)

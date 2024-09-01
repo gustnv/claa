@@ -20,7 +20,6 @@ def panel_tutor():
         # Check if the tutor has an associated group
         tutor_has_group = get_group_by_email_tutor(
             session['email_user'])
-        print("ok")
 
         # Render the tutor panel with the relevant information
         return render_template('tutor/panel-tutor.html',
@@ -79,12 +78,10 @@ def submit_signup_group():
     # Check if the tutor already has a group
     if get_group_by_email_tutor(email_tutor):
         # Update the group details if the tutor already has a group
-        print(get_group_by_email_tutor(form_data["email"]))
-        if group_exists(form_data["email"]) and get_group_by_email_tutor(email_tutor)[0] != form_data["email"]:
+        if group_exists(form_data["email"]) and get_email_group_by_tutor(email_tutor) != form_data["email"]:
             flash("Email indisponível - pertence a outro grupo")
             return redirect("/signup-group")
 
-            # Update the group details if the tutor already has a group
         update_group(form_data, email_tutor)
         session.pop('signup_group_data', None)  # Clear saved form data
         return redirect("/panel-tutor")
@@ -102,7 +99,7 @@ def submit_signup_group():
 # Route to add a new group for the tutor
 
 
-@tutor_bp.route("/add-group", methods=["GET"])
+@ tutor_bp.route("/add-group", methods=["GET"])
 def add_group():
     email_tutor = session.get("email_user")
     if not email_tutor:
@@ -114,7 +111,7 @@ def add_group():
 # Route to edit an existing group for the tutor
 
 
-@tutor_bp.route("/edit-group", methods=["GET"])
+@ tutor_bp.route("/edit-group", methods=["GET"])
 def edit_group():
     email_tutor = session.get("email_user")
     if not email_tutor:

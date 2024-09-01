@@ -59,14 +59,27 @@ def update_group(form_data, email_tutor):
         cnx = mysql.connector.connect(**config)
         cursor = cnx.cursor()
 
-        # Query to update the group details
+        # Step 1: Fetch the current email associated with the tutor
+        current_email = get_email_group_by_tutor(email_tutor)
+
+        # Step 2: Transfer the report to the new email (if email is being changed)
+        if current_email != form_data["email"]:
+            # Set reports.email_group to NULL where email_group = current_email
+            query_set_null = """
+            UPDATE claa.reports
+            SET email_group = NULL
+            WHERE email_group = %s
+            """
+            cursor.execute(query_set_null, (current_email,))
+            cnx.commit()  # Commit the transaction to save chan
+
+            # Query to update the group details
         query = """
         UPDATE claa.groups 
         SET email = %s, name = %s, instagram = %s, webpage = %s, nof_scholarships = %s,
             nof_volunteers = %s, address = %s, campus = %s, center = %s
         WHERE email_tutor = %s
         """
-        print(form_data)
 
         # Execute the query with the form data
         cursor.execute(query, (
@@ -81,6 +94,16 @@ def update_group(form_data, email_tutor):
             form_data['center'],
             email_tutor
         ))
+        cnx.commit()  # Commit the transaction to save changes
+
+        # Step 4: Set the email_group in reports table to the new email where it is NULL
+        query_update_reports = """
+        UPDATE claa.reports
+        SET email_group = %s
+        WHERE email_group IS NULL
+        """
+        cursor.execute(query_update_reports,
+                       (form_data['email'],))
         cnx.commit()  # Commit the transaction to save changes
 
     except Error as e:

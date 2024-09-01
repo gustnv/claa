@@ -2,6 +2,7 @@ from flask import Blueprint, render_template, redirect, session, flash, request
 # Import the database module for interacting with tutor and group data
 from db.auth import *
 from db.group import *
+from db.group import *
 from db.tutor import *
 
 # Define the blueprint for CLAA-related routes
@@ -85,7 +86,6 @@ def tutor_page():
 @claa_bp.route("/delete-tutor/<email>", methods=["DELETE"])
 def delete_tutor_page(email):
     # Attempt to delete the tutor from the database
-    print(email)
     if delete_tutor(email):
         # Return a success response if deletion is successful
         return {"success": True}, 200

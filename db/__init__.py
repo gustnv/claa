@@ -20,6 +20,7 @@ from .group import (
     transfer_group
 )
 from .report import (
+    transfer_report,
     get_report_by_email_group,
     report_exists,
     get_scheduled_activities,
