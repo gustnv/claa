@@ -4,6 +4,7 @@ from mysql.connector import Error
 import bcrypt
 from datetime import datetime
 import random
+import os
 
 import smtplib
 from email.mime.text import MIMEText
@@ -136,7 +137,7 @@ def send_signup_invitation(email):
     smtp_server = "smtp.gmail.com"
     smtp_port = 587
     smtp_username = "nunesvianagustavo@gmail.com"
-    smtp_password = "cmdxacndmjfkrptj"
+    smtp_password = os.environ.get('EMAIL_PASSWORD', 'cmdxacndmjfkrptj')
 
     sender_email = smtp_username
     subject = "Convite para se inscrever como Tutor"
@@ -173,7 +174,7 @@ def send_code(email):
     smtp_server = "smtp.gmail.com"
     smtp_port = 587
     smtp_username = "nunesvianagustavo@gmail.com"
-    smtp_password = "cmdxacndmjfkrptj"
+    smtp_password = os.environ.get('EMAIL_PASSWORD', 'cmdxacndmjfkrptj')
 
     # Email content
     sender_email = smtp_username
@@ -311,6 +312,75 @@ def get_all_users():
             cnx.close()
 
     return users
+
+
+def get_all_groups():
+    try:
+        cnx = mysql.connector.connect(**config)
+        cursor = cnx.cursor(dictionary=True)
+
+        query = "SELECT * FROM claa.groups"
+        cursor.execute(query)
+        groups = cursor.fetchall()
+
+    except Error as e:
+        print(f"Error: {e}")
+        return []
+
+    finally:
+        if cursor:
+            cursor.close()
+        if cnx:
+            cnx.close()
+
+    return groups
+
+
+def get_tutors_without_group():
+    try:
+        cnx = mysql.connector.connect(**config)
+        cursor = cnx.cursor(dictionary=True)
+
+        query = """
+        SELECT users.email, users.name 
+        FROM users 
+        LEFT JOIN claa.groups ON users.email = claa.groups.email_tutor 
+        WHERE claa.groups.email_tutor IS NULL
+        """
+        cursor.execute(query)
+        tutors = cursor.fetchall()
+
+    except Error as e:
+        print(f"Error: {e}")
+        return []
+
+    finally:
+        if cursor:
+            cursor.close()
+        if cnx:
+            cnx.close()
+
+    return tutors
+
+
+def transfer_group(group_email, tutor_email):
+    try:
+        cnx = mysql.connector.connect(**config)
+        cursor = cnx.cursor()
+
+        # Update the group with the new tutor
+        query = "UPDATE claa.groups SET email_tutor = %s WHERE email = %s"
+        cursor.execute(query, (tutor_email, group_email))
+        cnx.commit()
+
+    except Error as e:
+        print(f"Error: {e}")
+
+    finally:
+        if cursor:
+            cursor.close()
+        if cnx:
+            cnx.close()
 
 
 def tutor_has_group(email):

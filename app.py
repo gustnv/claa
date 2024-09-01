@@ -129,6 +129,35 @@ def panel_claa():
         return redirect('/login')
 
 
+@app.route("/transfer-group", methods=["GET"])
+def transfer_group():
+    email_tutor = session.get("email_user")
+    if not email_tutor:
+        return redirect("/login")
+
+    groups = bd.get_all_groups()
+    tutors_without_group = bd.get_tutors_without_group()
+
+    return render_template("transfer-group.html", groups=groups, tutors_without_group=tutors_without_group)
+
+
+@app.route("/submit-transfer-group", methods=["POST"])
+def submit_transfer_group():
+    email_tutor = session.get("email_user")
+    if not email_tutor:
+        return redirect("/login")
+
+    group_email = request.form.get("group-email")
+    tutor_email = request.form.get("tutor-email")
+
+    if bd.tutor_has_group(tutor_email):
+        flash("Tutor already belongs to a group.")
+        return redirect("/transfer-group")
+
+    bd.transfer_group(group_email, tutor_email)
+    return redirect("/panel-claa")
+
+
 @app.route("/tutor", methods=["GET"])
 def tutor():
     if 'email_user' in session:
