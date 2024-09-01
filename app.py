@@ -2,7 +2,6 @@ from flask import Flask, session, flash, render_template, redirect, request
 from flask_session import Session
 import os
 from bd import bd
-import jsonify
 
 app = Flask(__name__)
 
